@@ -1,0 +1,23 @@
+/**
+* Row colors
+*/
+.ui-jqgrid .altrow { background: #F4F4F4; }
+
+.ui-jqgrid .red       { background: #FFCCCC; }
+.ui-jqgrid .green   { background: #CCFFCC; }
+.ui-jqgrid .blue     { background: #CCCCFF; }
+.ui-jqgrid .purple { background: #CCCCFF; }
+.ui-jqgrid .yellow { background: #FBEC88; }
+.ui-jqgrid .orange { background: #F2CB35; }
+.ui-jqgrid .grey     { background: #DDDDDD; }
+
+.ui-jqgrid TR.bold TD {font-weight: bold;}
+.ui-jqgrid TR.jqgrow TD.bold {font-weight: bold;}
+
+.ui-jqgrid TR.italic TD {font-style: italic;}
+.ui-jqgrid TR.jqgrow TD.italic {font-style: italic;}
+
+.ui-jqgrid .font-green {color: green;}
+.ui-jqgrid .font-red {color: red;}
+
+.ui-jqgrid .ui-state-highlight {background: #FFFFCC;}
