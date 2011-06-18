@@ -1,0 +1,58 @@
+!! IN DEVELOPMENT. DO NOT USE IN PRODUCTION!!
+
+jqGridPHP is a 
+This project is intended to save tons of time for PHP developers jqGrid.
+
+It is inspired by Tony Tomov and his great jQuery Grid Plugin!
+Check it here: https://github.com/tonytomov/jqGrid
+
+The project consists of two parts:
+
+= jqGrid Backend PHP Library
+
+The library allows you to create full functional grids with only few lines of code.
+
+It provides server side support for the most of jqGrid features:
+
+- Dynamic grid rendering (HTML & JS)
+- JSON data output
+- Pagination
+- Sorting
+- Toolbar search
+- Add, Edit, Delete and custom operations
+- TreeGrid
+- Export to Excel
+
+All these functions are implemented in one PHP class. It meant to be extended using PHP inheritance feature.
+You may alter almost any aspect of grid functionality and integrate it into your application.
+
+It is possible to work with any data source. Not only database.
+It is possible to add your custom code before or after ANY of the common functions, or replace them entirely with anything you need.
+
+= jqGrid Extension Function
+
+Additional JS and CSS files working in conjunction with PHP-lib.
+
+They make grids to look better and implements the following features:
+
+- Per-row and per-cell color highlighting (adds your classes to rows and cells)
+- Easy Form editing server-side validation (just throw an exception anywhere during the editing process)
+- Easy Summary row
+- Additional predefined formatters with placeholders (you can format one column based on values from other columns)
+- Real selection preserve (the native one is little buggy)
+- Right-click menu
+
+These functions DOES NOT modify the jqGrid core script in any way.
+You dont need the special forks of jqGrid, so it is possible to upgrade jqGrid any time you want.
+
+= Documentation & Live demo
+
+Coming soon..
+
+= Requirements & dependencies
+
+The script requires PHP 5.3.
+It also use PDO as default database driver, but you can replace it with your own data wrapper.
+
+
+Copyright (c) 2011 Vitaly Markov

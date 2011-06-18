@@ -1,0 +1,43 @@
+/**
+* Nice grid look
+*/
+.ui-jqgrid-nice {font-family: tahoma, arial;}
+.ui-jqgrid-nice TR.jqgrow TD {font-size: 11px;}
+.ui-jqgrid-nice TR.jqgrow TD {padding-left: 5px; padding-right: 5px;}
+.ui-jqgrid-nice TR.jqgrow A {color: blue;}
+
+.ui-jqgrid-nice INPUT,
+.ui-jqgrid-nice SELECT,
+.ui-jqgrid-nice TEXTAREA, 
+.ui-jqgrid-nice BUTTON {font-family: tahoma, arial;}
+
+/**
+* Row colors
+*/
+.ui-jqgrid .altrow { background: #F4F4F4; }
+
+.ui-jqgrid .red       { background: #FFCCCC; }
+.ui-jqgrid .green   { background: #CCFFCC; }
+.ui-jqgrid .blue     { background: #CCCCFF; }
+.ui-jqgrid .purple { background: #CCCCFF; }
+.ui-jqgrid .yellow { background: #FBEC88; }
+.ui-jqgrid .orange { background: #F2CB35; }
+.ui-jqgrid .grey     { background: #DDDDDD; }
+
+/**
+* Additional highlight styles
+*/
+.ui-jqgrid TR.bold TD {font-weight: bold;}
+.ui-jqgrid TR.jqgrow TD.bold {font-weight: bold;}
+
+.ui-jqgrid TR.italic TD {font-style: italic;}
+.ui-jqgrid TR.jqgrow TD.italic {font-style: italic;}
+
+.ui-jqgrid .font-green {color: green;}
+.ui-jqgrid .font-red {color: red;}
+
+/**
+* Brighter highlight color
+* It must be defined at the bottom to override previous background highlighting
+*/
+.ui-jqgrid .ui-state-highlight {background: #FFFFCC;}
