@@ -5,8 +5,9 @@ class jqGrid_DB_Pdo extends jqGrid_DB
 	public function __construct(jqGridLoader $loader)
 	{
 		parent::__construct($loader);
-		
-		$this->db_type = strstr($loader->get('pdo_dsn'), ':', true);
+
+		$dsn = $loader->get('pdo_dsn');
+		$this->db_type = substr($dsn, 0, strpos($dsn, ':') + 1);
 	}
 
 	public function link()

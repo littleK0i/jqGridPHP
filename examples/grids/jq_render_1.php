@@ -1,27 +1,29 @@
 <?php
 
-class jq_general extends jqGrid
+class jq_render_1 extends jqGrid
 {
 	protected function init()
 	{
-		#Set database table
+		#Grid options in PHP init
+		$this->options = array(
+			'multiselect'  => true,
+			'multiboxonly' => true,
+
+			#JS function in PHP are possible, but not recommended!
+			'onSelectRow' => new jqGrid_Data_Raw("function(id){ alert('Row '+id+' selected'); }"),
+		);
+
 		$this->table = 'tbl_customer';
 
-		$this->cols_default = array('editable' => true);
-
-		#Set columns
 		$this->cols = array(
-			
+
 			'id'        =>array('label' => 'ID',
 								'width' => 10,
 								'align' => 'center',
-								'editable' => false,
-								'search_op' => 'in',
 								),
 
 			'first_name'=>array('label' => 'Frist name',
 								'width'	=> 35,
-								'search_op' => 'in',
 								),
 
 			'last_name' =>array('label' => 'Last name',
@@ -42,21 +44,14 @@ class jq_general extends jqGrid
 								'formatter' => 'numeric',
 								'align'	=> 'center',
 								),
-
-			'date_register'=>array('label' => 'Register',
-								'width'	=> 20,
-								'formatter' => 'date',
-								'align'	=> 'center',
-								),
 		);
-
-		#Set nav
-		$this->nav = array('add' => true, 'edit' => true, 'del' => true);
 	}
 
-	protected function operData($r)
+	#Final options hook. Called on rendering only!
+	protected function renderOptions($opts)
 	{
-		throw new jqGrid_Exception('ohhh');
-		return $r;
+		$opts['caption'] = 'Members on ' . date('d.m.Y');
+
+		return $opts;
 	}
 }

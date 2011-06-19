@@ -4,6 +4,7 @@ abstract class jqGrid
 {
 	protected $grid_id;
 	protected $input;
+	protected $DB;
 
 	protected $loader;
 	protected $table;
@@ -41,6 +42,8 @@ abstract class jqGrid
 	protected $agg   = array();
 	protected $debug = array();
 
+	protected $response = array();
+
 	#Local column default
 	protected $cols_default = array();
 
@@ -77,7 +80,7 @@ abstract class jqGrid
 	);
 
 	protected $reserved_col_names = array('page', 'sidx', 'sord', 'nd', 'parent', 'nlevel', 'expanded', 'isLeaf');
-	protected $internals = array('name', 'db', 'db_agg', 'unset', 'manual', 'search_op');
+	protected $internals = array('db', 'db_agg', 'unset', 'manual', 'search_op');
 
 	protected $hacks = array(
 		'implode_col_value'	=> true,
@@ -98,7 +101,7 @@ abstract class jqGrid
 		
 		$this->loader	= $loader;
 		$this->input	= $this->getInput();
-		$this->DB		= $loader->getDB();
+		$this->DB		= $loader->loadDB();
 
 		$this->json_mode = $this->input('_json_mode');
 
@@ -215,7 +218,8 @@ abstract class jqGrid
 		#Common tasks for basic opers
 		if(in_array($oper, array('add', 'edit', 'del')))
 		{
-			$id = $this->input($this->primary_key);
+			#Get ID
+			$id = $this->input('id');
 		}
 
 		switch($oper)
@@ -229,46 +233,44 @@ abstract class jqGrid
 
 				if($oper == 'add')
 				{
-					$response = $this->opAdd($data);
+					$id = $this->opAdd($data);
+					$this->response['new_id'] = $id;
 				}
 				elseif($oper == 'edit')
 				{
-					$response = $this->opEdit($id, $data);
+					$this->opEdit($id, $data);
 				}
-
-				$id = isset($response['new_id']) ? $response['new_id'] : $id;
 
 				$this->operAfterAddEdit($id);
 			break;
 
 			case 'del':
-				$response = $this->opDel($id);
+				$this->opDel($id);
 			break;
 
 			default:
 				$callback = array($this, jqGrid_Utils::getFunctionName('op', $oper));
 
-				if(!is_callable($callback))
+				if(is_callable($callback))
+				{
+					call_user_func($callback);
+				}
+				else
 				{
 					throw new jqGrid_Exception("Oper $oper is not defined");
 				}
-
-				$response = call_user_func($callback);
 			break;
 		}
 
-		$response = is_array($response) ? $response : array();
+		$this->response = array_merge(array('success' => 1), $this->response);
 
-		if($ret = $this->operComplete($oper, $response))
-		{
-			$response = $ret;
-		}
+		$this->operComplete($oper);
 
 		//----------------
 		// Output result
 		//----------------
 
-		$this->json($response);
+		$this->json($this->response);
 	}
 
 	/**
@@ -301,7 +303,9 @@ abstract class jqGrid
 		{
 			if(isset($c['unset']) and $c['unset']) continue;
 
-			$colNames[] = $c['label'];
+			#Remove internal column properties
+			$c = array_diff_key($c, array_flip($this->internals));
+			
 			$colModel[] = $this->renderColumn($c);
 		}
 
@@ -734,12 +738,7 @@ abstract class jqGrid
 		#Ajax input is always utf-8
 		if($this->loader->get('encoding') != 'utf-8')
 		{
-			$iconv = function(&$val, $key, $enc_from, $enc_to)
-			{
-				$val = iconv($enc_from, $enc_to, $val);
-			};
-
-			array_walk_recursive($req, $iconv, 'utf-8', $this->loader->get('encoding'));
+			array_walk_recursive($req, array('jqGrid_Utils', 'iconvWalk'), 'utf-8', $this->loader->get('encoding'));
 		}
 
 		return $req;
@@ -768,8 +767,10 @@ abstract class jqGrid
 			throw new jqGrid_Exception("Column name must not begin with underscore!");
 		}
 
-		#Name always matches the array key
-		$c['name'] = $k;
+		#Name and index always matches the array key
+		#For your own sake!!
+		$c['name']  = $k;
+		$c['index'] = $k;
 
 		#Name = column key if not set
 		if(!isset($c['label'])) $c['label'] = $k;
@@ -796,12 +797,14 @@ abstract class jqGrid
 	/**
 	 * (Oper) Insert
 	 *
+	 * Please note: this is the only "Oper" function, that must return new row id
+	 *
 	 * @param  array $ins form data
-	 * @return array response
+	 * @return integer|string new_id
 	 */
 	protected function opAdd(array $ins)
 	{
-		return array('new_id' => $this->DB->insert($this->table, $ins, true));
+		return $this->DB->insert($this->table, $ins, true);
 	}
 
 	/**
@@ -809,35 +812,32 @@ abstract class jqGrid
 	 *
 	 * @param  integer $id - row_id to update
 	 * @param  array $upd form data
-	 * @return array response
+	 * @return void
 	 */
 	protected function opEdit($id, array $upd)
 	{
-		$result = $this->DB->update($this->table, $upd, array($this->primary_key => $id));
-		return array('row_count' => $this->DB->rowCount($result));
+		$this->DB->update($this->table, $upd, array($this->primary_key => $id));
 	}
 
 	/**
 	 * (Oper) Delete
 	 *
 	 * @param  integer|string $id - one or multiple id's to delete
-	 * @return array response
+	 * @return void
 	 */
 	protected function opDel($id)
 	{
 		#Delete single value
 		if(is_numeric($id))
 		{
-			$result = $this->DB->delete($this->table, $id);
+			$this->DB->delete($this->table, $id);
 		}
 		#Delete multiple value
 		else
 		{
 			$ids = array_map('intval', explode(',', $id));
-			$result = $this->DB->delete($this->table, $this->primary_key . ' IN (' . implode(',', $ids) . ')');
+			$this->DB->delete($this->table, $this->primary_key . ' IN (' . implode(',', $ids) . ')');
 		}
-
-		return array('row_count' => $this->DB->rowCount($result));
 	}
 
 	//----------------
@@ -868,14 +868,16 @@ abstract class jqGrid
 		return;
 	}
 
-	protected function operComplete($oper, $response)
+	/**
+	 * (Oper) Hook after ALL oper's
+	 * Useful for cleanup and dropping caches
+	 *
+	 * @param  $oper
+	 * @return void
+	 */
+	protected function operComplete($oper)
 	{
-		if(!isset($response['success']))
-		{
-			$response['success'] = 1;
-		}
-
-		return $response;
+		return;
 	}
 
 	//----------------
@@ -911,7 +913,7 @@ abstract class jqGrid
 	}
 
 	/**
-	 * Export data
+	 * Export data using plugin
 	 */
 	protected function outExport()
 	{
@@ -953,25 +955,6 @@ abstract class jqGrid
 	 */
 	protected function renderColumn(array $c)
 	{
-		#Remove internal column properties
-		$c = array_diff_key($c, array_flip($this->internals));
-
-		#Hacks part
-		if($this->hacks['implode_col_value'])
-		{
-			if( isset($c['edittype']) and $c['edittype'] == 'select'
-			and isset($c['editoptions']['value']) and is_array($c['editoptions']['value']) )
-			{
-				$c['editoptions']['value'] = jqGrid_Utils::implodeColValue($c['editoptions']['value']);
-			}
-
-			if( isset($c['stype']) and $c['stype'] == 'select'
-			and isset($c['searchoptions']['value']) and is_array($c['searchoptions']['value']) )
-			{
-				$c['searchoptions']['value'] = jqGrid_Utils::implodeColValue($c['searchoptions']['value']);
-			}
-		}
-
 		return $c;
 	}
 
@@ -1074,6 +1057,11 @@ abstract class jqGrid
 			}
 
 			$code .= ");\n";
+
+			if(isset($data['nav']['excel']) and $data['nav']['excel'])
+			{
+				$code .= '$grid.jqGrid("navButtonAdd", pager, {caption: "Excel", title: "Excel", icon: "ui-extlink", onClickButton: function(){ $(this).jqGrid("extExport", {"export" : "ExcelHtml", "rows": -1}); }});' . "\n";
+			}
 		}
 
 		return $code;
@@ -1135,7 +1123,13 @@ abstract class jqGrid
 			return self::searchOpEqual($c, $val);
 		}
 
-		#Numeric?
+		#Numeric by formatter?
+		if(isset($c['formatter']) and in_array($c['formatter'], array('integer', 'numeric', 'currency')))
+		{
+			return self::searchOpNumeric($c, $val);	
+		}
+
+		#Numeric by value?
 		if(preg_match('#^([<>=!]{1,2})?\d+$#', $val))
 		{
 			return self::searchOpNumeric($c, $val);

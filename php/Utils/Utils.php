@@ -30,7 +30,7 @@ class jqGrid_Utils
 			return '"' . str_replace($jsonReplaces[0], $jsonReplaces[1], $a) . '"';
 		}
 
-		if(is_object($a) and $a instanceof jqGridRawData)
+		if(is_object($a) and $a instanceof jqGrid_Data_Raw)
 		{
 			return strval($a);
 		}
@@ -99,5 +99,10 @@ class jqGrid_Utils
 		$parts = array_map('ucfirst', $parts);
 
 		return self::checkAlphanum($prefix . implode('', $parts));
+	}
+
+	public static function iconvWalk(&$val, $key, $enc_from, $enc_to)
+	{
+		$val = iconv($enc_from, $enc_to, $val);
 	}
 }

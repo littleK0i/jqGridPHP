@@ -15,7 +15,7 @@ class jqGridLoader
 		'grid_path'	   => null,
 		'encoding'     => 'utf-8',
 
-		'db_driver'	   => 'pdo',
+		'db_driver'	   => 'Pdo',
 
 		'pdo_dsn'      => null,
 		'pdo_user'     => 'root',
@@ -35,16 +35,10 @@ class jqGridLoader
 		$this->settings['grid_path'] = $this->root_path . 'grids' . DS;
 
 		#Load base grid class
-		require_once($this->root_path . 'jqGrid.class.php');
-
-		#Load everything from utils
-		foreach(glob($this->root_path . DS . 'utils' . DS . '*.class.php') as $f)
-		{
-			require_once $f;
-		}
+		require_once($this->root_path . 'jqGrid.php');
 
 		#Register autoload
-		spl_autoload_register(array($this, 'autoload'), false, true);
+		spl_autoload_register(array($this, 'autoload'));
 	}
 
 	/**
@@ -65,18 +59,7 @@ class jqGridLoader
 			$grid->catchException($e);
 		}
 	}
-
-	public function loadAdaptor($name)
-	{
-		//require_once($this->root_path . 'adaptor' . DS . $name . '.class.php');
-	}
-
-	public function loadExport($name)
-	{
-		$name = 'jqGrid_Export_'.ucfirst($name);
-		return new $name($this);
-	}
-
+	
 	public function set($key, $val)
 	{
 		$this->settings[$key] = $val;
@@ -87,13 +70,16 @@ class jqGridLoader
 		return isset($this->settings[$key]) ? $this->settings[$key] : null;
 	}
 
-	public function getDB()
+	public function load($name)
+	{
+		require_once($this->settings['grid_path'] . $name . '.php');
+		return new $name($this);
+	}
+
+	public function loadDB()
 	{
 		$class = 'jqGrid_DB_' . ucfirst($this->settings['db_driver']);
-
-		//require_once $this->root_path . DS . 'db' . DS . 'jqGrid_DB.class.php';
-		//require_once $this->root_path . DS . 'db' . DS . $class . '.class.php';
-
+		
 		return new $class($this);
 	}
 
@@ -129,20 +115,18 @@ class jqGridLoader
 		#Root class
 		if(count($parts) == 2)
 		{
-			require $this->root_path . $parts[1] . DS . $parts[1] . '.php';
+			$path = $this->root_path . $parts[1] . DS . $parts[1] . '.php';
 		}
 		#Extend class
 		else
 		{
-			require $this->root_path . implode(DS, array_slice($parts, 1, -1)) . DS . end($parts)  . '.php';
+			$path = $this->root_path . implode(DS, array_slice($parts, 1, -1)) . DS . end($parts)  . '.php';
 		}
-	}
 
-	protected function load($name)
-	{
-		require_once($this->settings['grid_path'] . $name . '.php');
-		$grid = new $name($this);
-
-		return $grid;
+		#Do not interfere with other autoloads
+		if(file_exists($path))
+		{
+			require $path;
+		}
 	}
 }

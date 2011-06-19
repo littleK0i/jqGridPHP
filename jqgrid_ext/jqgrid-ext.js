@@ -233,6 +233,9 @@ $.jgrid.extend(
 						}
 						else
 						{
+							console.log(row_idx);
+							console.log(cell_idx);
+							console.log(_class[row_idx][cell_idx]);
 							$grid.jqGrid('setCell', row_idx, cell_idx, '', _class[row_idx][cell_idx]);
 						}
 					}
@@ -247,6 +250,7 @@ $.jgrid.extend(
 		{
 			var $grid = $(this);
 			if(typeof $grid.jqGrid('getGridParam', 'userData')['agg'] != 'object') return;
+			console.dir($grid.jqGrid('getGridParam', 'userData')['agg']);
 			$grid.jqGrid('footerData', 'set', $grid.jqGrid('getGridParam', 'userData')['agg']);
 		});
 	},
