@@ -1,16 +1,30 @@
 <?php
-
-class jqGrid_Data_Value
+/**
+ * Special serialization for 'selects'
+ * and 'searchoptions' => 'value', 'editoptions' => 'value' etc.
+ */
+class jqGrid_Data_Value extends jqGrid_Data
 {
-	protected $data;
-	
-	public function __construct(array $data)
+	#Ensure 'array' input
+	public function __construct(array $data, $first = null)
 	{
-		$this->data = $data;
+		if(!is_null($first))
+		{
+			$data = array('' => $first) + $data;
+		}
+		
+		parent::__construct($data);
 	}
 
 	public function __toString()
 	{
-		return 
+		$base = array();
+
+		foreach($this->data as $k => $v)
+		{
+			$base[] = $k . ':' . $v;
+		}
+
+		return '"' . implode(';', $base) . '"';
 	}
 }

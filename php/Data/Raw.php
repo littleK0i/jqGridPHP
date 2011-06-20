@@ -1,21 +1,9 @@
 <?php
 
-class jqGrid_Data_Raw
+class jqGrid_Data_Raw extends jqGrid_Data
 {
-	protected $text = '';
-	
-	public function __construct($text)
-	{
-		$this->text = $text;
-	}
-
 	public function __toString()
 	{
-		return $this->getText();
-	}
-
-	public function getText()
-	{
-		return $this->text;
+		return $this->data;
 	}
 }

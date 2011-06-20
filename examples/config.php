@@ -40,7 +40,7 @@ $_SECTIONS = array(
 		'items' => array('oper_basic' => 'Extend basic oper',
 						 //'oper_custom'=> 'Custom oper',
 						 //'oper_valid' => 'Server-side validation',
-						//'oper_upload' => 'Upload files',
+						 'oper_upload' => 'Upload files',
 						),
 	),
 );

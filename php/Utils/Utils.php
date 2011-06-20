@@ -30,7 +30,8 @@ class jqGrid_Utils
 			return '"' . str_replace($jsonReplaces[0], $jsonReplaces[1], $a) . '"';
 		}
 
-		if(is_object($a) and $a instanceof jqGrid_Data_Raw)
+		#Special internal data structure - no escaping
+		if(is_object($a) and $a instanceof jqGrid_Data)
 		{
 			return strval($a);
 		}
@@ -80,18 +81,6 @@ class jqGrid_Utils
 		return $val;
 	}
 
-	public static function implodeColValue(array $hash)
-	{
-		$base = array();
-
-		foreach($hash as $k => $v)
-		{
-			$base[] = $k . ':' . $v;
-		}
-
-		return implode(';', $base);
-	}
-
 	public static function getFunctionName($prefix, $name)
 	{
 		//underscores to camel
@@ -101,6 +90,10 @@ class jqGrid_Utils
 		return self::checkAlphanum($prefix . implode('', $parts));
 	}
 
+	/**
+	 * Callback for array_walk
+	 * PHP 5.2 does not support closures, so..
+	 */
 	public static function iconvWalk(&$val, $key, $enc_from, $enc_to)
 	{
 		$val = iconv($enc_from, $enc_to, $val);

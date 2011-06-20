@@ -23,9 +23,10 @@ abstract class jqGrid_DB
 
 		$q = "INSERT INTO $tblName (" . implode(', ', array_keys($ins)) . ") VALUES (" . implode(', ', $ins) . ")";
 
+		#Special handling for PostgreSQL
 		if($last_id and $this->db_type == 'postgresql')
 		{
-			$q .= ' RETURNING ' . $this->primary_key;
+			$q .= ' RETURNING *';
 		}
 
 		$result = $this->query($q);
@@ -137,7 +138,7 @@ abstract class jqGrid_DB
 		{
 			$key = jqGrid_Utils::checkAlphanum($k);
 
-			if(is_object($v) and $v instanceof jqGridRawData)
+			if(is_object($v) and $v instanceof jqGrid_Data)
 			{
 				$val = strval($v); //no escaping on specififc field
 			}
