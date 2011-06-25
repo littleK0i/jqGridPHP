@@ -7,7 +7,7 @@ require_once($_CONFIG['root_path'] . 'jqGridLoader.php');
 
 $jq_loader = new jqGridLoader();
 
-$jq_loader->set('grid_path', 'grids/');
+$jq_loader->set('grid_path', 'grids' . DS);
 
 $jq_loader->set('pdo_dsn', $_CONFIG['pdo_dsn']);
 $jq_loader->set('pdo_user', $_CONFIG['pdo_user']);

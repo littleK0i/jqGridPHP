@@ -76,6 +76,17 @@ class test_data_generator
 			) ENGINE=InnoDB;
 		");
 
+		$this->DB->query("
+			CREATE TABLE IF NOT EXISTS `tbl_files` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `filename` text NOT NULL,
+			  `size` int(11) unsigned NOT NULL,
+			  `comment` text,
+			  `version` int(11) NOT NULL DEFAULT '0',
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB;
+		");
+
 		//-----------
 		// Truncate
 		//-----------
@@ -85,6 +96,7 @@ class test_data_generator
 		$this->DB->query('TRUNCATE TABLE tbl_customer');
 		$this->DB->query('TRUNCATE TABLE tbl_order');
 		$this->DB->query('TRUNCATE TABLE tbl_order_item');
+		$this->DB->query('TRUNCATE TABLE tbl_files');
 
 		//-----------
 		// Generate data

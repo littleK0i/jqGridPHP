@@ -27,33 +27,47 @@ $.extend($.jgrid.defaults,
 
 $.jgrid.ext = 
 {
+	errorHandler : function(obj)
+	{
+		if(obj.error)
+		{
+			$.jgrid.info_dialog($.jgrid.errors.errcap,obj.error_msg,$.jgrid.edit.bClose);
+		}
+	},
 	ajaxFormProxy: function(opts, act)
 	{
+		//get url
 		opts.url = $(this).getGridParam('url');
 		
+		//use normal ajax-call for del
 		if(act.substring(0, 4) == 'del_')
 		{
 			$.ajax(opts);
 		}
 		
+		//force iframe
 		opts.iframe = true;
-		
-		$.extend(opts.data, {'_json_mode' : 'ajaxForm'});
 		
 		var $form = $('#FrmGrid_' + $(this).getGridParam('id'));
 		var ele = $form.find('INPUT,TEXTAREA').not(':file');
 		
+		//Prevent non-file inputs double serialization
 		ele.each(function()
 		{
 			$(this).data('name', $(this).attr('name')).removeAttr('name');
 		});
 		
+		//Send only previously generated data + files
 		$form.ajaxSubmit(opts);
 		
-		ele.each(function()
+		//Set names back after form being submitted
+		setTimeout(function()
 		{
-			$(this).attr('name', $(this).data('name'));
-		});
+			ele.each(function()
+			{
+				$(this).attr('name', $(this).data('name'));
+			});
+		}, 200);
 	}
 };
 
@@ -103,7 +117,7 @@ $.extend($.fn.fmatter,
 			}
 		});
 		
-		return $.jgrid.format('<a href="{0}" class="{1}" target="{2}">{3}</a>', href, opt.class, opt.target, cellvalue);
+		return $.jgrid.format('<a href="{0}" class="{1}" target="{2}">{3}</a>', href, opt['class'], opt.target, cellvalue);
 	}
 });
 
@@ -157,42 +171,96 @@ $.jgrid.extend(
 		$t.p.colIndex = undefined;
 	},
 	
-	'extRequest'		: function(data, success, lock, rows)
+	'extRequest'		: function(data, options)
 	{
+		
 		return this.each(function()
 		{
+			var $t = this;
 			var $grid = $(this);
+			
+			//-----------
+			// Settings
+			//-----------
+			
+			var settings = {
+				'url'		: $grid.getGridParam('url'),
+				'selrow'    : false,
+				'lock'      : true,
+				'reload'    : true,
+				'success'   : null,
+				'error'		: null
+			};
+			
+			$.extend(settings, options);
+			
+			//-----------
+			// Prepare
+			//-----------
+			
 			var postData = {};
 			
-			if(rows)
+			if(settings.selrow)
 			{
 				if($grid.jqGrid('getGridParam', 'multiselect'))
 				{
 					postData['id[]'] = $grid.jqGrid('getGridParam', 'selarrrow');
+					
+					if(postData['id[]'].length < 1)
+					{
+						$.jgrid.info_dialog($.jgrid.errors.errcap,$.jgrid.errors.norecords,$.jgrid.edit.bClose);
+						return;
+					}
 				}
 				else
 				{
 					postData['id'] = $grid.jqGrid('getGridParam', 'selrow');
-				}
-				
-				if(!postData['id[]'] && !postData['id'])
-				{
-					$.jgrid.info_dialog($.jgrid.errors.errcap,$.jgrid.errors.norecords,jQuery.jgrid.edit.bClose);
-					return;
+					
+					if(!postData['id'])
+					{
+						$.jgrid.info_dialog($.jgrid.errors.errcap,$.jgrid.errors.norecords,$.jgrid.edit.bClose);
+						return;
+					}
 				}
 			}
 			
-			if(lock) $grid.jqGrid('extLoading');
-			
-			$.post($grid.jqGrid('getGridParam', 'url'), $.extend(postData, data), function(ret)
+			if(settings.lock)
 			{
-				if($.isFunction(success))
+				$grid.jqGrid('extLoading');
+			}
+			
+			//-----------
+			// Request
+			//-----------
+			
+			$.post(settings.url, $.extend(postData, data), function(ret)
+			{
+				if(ret.error)
 				{
-					success.call($grid, ret);
+					if(settings.error)
+					{
+						settings.error.call($t, ret);
+					}
+					else
+					{
+						$.jgrid.ext.errorHandler(ret);
+					}
+				}
+				else if($.isFunction(settings.success))
+				{
+					settings.success.call($t, ret);
+				}
+					
+				if(settings.lock)
+				{
+					$grid.jqGrid('extLoading', false);
 				}
 				
-				if(lock) $grid.trigger('reloadGrid');
-			});
+				if(settings.reload)
+				{
+					$grid.trigger('reloadGrid');
+				}
+			}, 'json');
 		});
 	},
 	
@@ -233,9 +301,6 @@ $.jgrid.extend(
 						}
 						else
 						{
-							console.log(row_idx);
-							console.log(cell_idx);
-							console.log(_class[row_idx][cell_idx]);
 							$grid.jqGrid('setCell', row_idx, cell_idx, '', _class[row_idx][cell_idx]);
 						}
 					}
@@ -250,7 +315,6 @@ $.jgrid.extend(
 		{
 			var $grid = $(this);
 			if(typeof $grid.jqGrid('getGridParam', 'userData')['agg'] != 'object') return;
-			console.dir($grid.jqGrid('getGridParam', 'userData')['agg']);
 			$grid.jqGrid('footerData', 'set', $grid.jqGrid('getGridParam', 'userData')['agg']);
 		});
 	},

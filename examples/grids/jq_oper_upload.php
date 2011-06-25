@@ -5,6 +5,7 @@ class jq_oper_upload extends jqGrid
 	protected function init()
 	{
 		$this->file_ext = array('jpg' => 'jpg', 'gif' => 'gif', 'png' => 'png');
+		$this->img_path = $this->loader->get('grid_path') . $this->grid_id . DS;
 
 		$this->table = 'tbl_files';
 
@@ -19,7 +20,7 @@ class jq_oper_upload extends jqGrid
 								),
 
 			'image'		=>array('label' => 'Image',
-								'width' => 30,
+								'width' => 14,
 								'manual' => true, //manually create images in PHP
 				 				                  //you can use JS formatter instead
 								),
@@ -30,7 +31,7 @@ class jq_oper_upload extends jqGrid
 								),
 
 			'file_ext'  =>array('label'=> 'Extension',
-								'db'   => 'UPPER(SUBSTRING(filename FROM -3 FOR 3))', //last 3 chars
+								'db'   => 'SUBSTRING(filename FROM -3 FOR 3)', //last 3 chars
 								'width' => 10,
 								'stype' => 'select',
 								'searchoptions' => array(
@@ -49,6 +50,7 @@ class jq_oper_upload extends jqGrid
 
 			#Hidden column for uploading
 			'upload'	=>array('label' => 'Upload image',
+								'manual' => true,
 								'hidden' => true,
 								'editable' => true,
 								'edittype' => 'file',
@@ -56,17 +58,72 @@ class jq_oper_upload extends jqGrid
 								'formoptions' => array('elmsuffix' => '&nbsp;&nbsp;&nbsp;' . implode(', ', $this->file_ext)),
 								),
 
-			'descr'		=>array('label' => 'Description',
+			'comment'	=>array('label' => 'Comment',
 								'width' => 50,
 								'align' => 'left',
 								'editable' => true,
 								'edittype' => 'textarea',
 								'editoptions' => array('style' => 'height: 120px; width: 260px;'),
 								),
+
+			'version'  =>array('unset' => true),
 		);
 
 		$nav_prm = array('width' => '420');
 
 		$this->nav = array('add' => true, 'edit' => true, 'addtext' => 'Add', 'edittext' => 'Edit', 'prmAdd' => $nav_prm, 'prmEdit' => $nav_prm);
+	}
+
+	protected function parseRow($r)
+	{
+		$r['image'] = "<img src='grids/{$this->grid_id}/{$r['id']}.{$r['file_ext']}?v={$r['version']}'>";
+		
+		return $r;
+	}
+
+	#Init file processing
+	protected function operData($r)
+	{
+		require_once 'misc/upload.class.php';
+
+		$this->upload = new upload($_FILES['upload']);
+
+		if(!$this->upload->uploaded)
+		{
+			throw new jqGrid_Exception('Upload failed');
+		}
+
+		if(!in_array($this->upload->file_src_name_ext, $this->file_ext))
+		{
+			throw new jqGrid_Exception('Bad file type');
+		}
+
+		$r['filename'] = $this->upload->file_src_name;
+		$r['size']     = $this->upload->file_src_size;
+
+		return $r;
+	}
+
+	protected function opEdit($id, $upd)
+	{
+		$upd['version'] = new jqGrid_Data_Raw('version + 1');
+
+		return parent::opEdit($id, $upd);
+	}
+
+	#Upload
+	protected function operAfterAddEdit($id)
+	{
+		ini_set('memory_limit', '128M');
+		
+		$this->upload->file_new_name_body   = $id;
+		$this->upload->file_auto_rename     = false;
+		$this->upload->file_overwrite       = true;
+		$this->upload->image_resize         = true;
+		$this->upload->image_x              = 75;
+		$this->upload->image_y        		= 75;
+		$this->upload->image_ratio_crop		= true;
+
+		$this->upload->process($this->img_path);
 	}
 }

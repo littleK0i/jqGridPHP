@@ -1,37 +1,54 @@
 <?php
 
-class jq_simple extends jqGrid
+class jq_render_2 extends jqGrid
 {
 	protected function init()
 	{
-		#Set database table
+		$this->nav = array(
+
+			#Set common nav actions
+			'edit' => true,
+			'del' => true,
+			'view' => true,
+
+			#Set text labels. It's better to set them in defaults
+			'edittext' => 'Edit',
+			'deltext'  => 'Delete',
+			'viewtext' => 'View',
+			
+			#Set common excel export
+			'excel' => true,
+			'exceltext' => 'Excel',
+
+			#Set editing params
+			'prmEdit' => array('width' => 400,
+							   'bottominfo' => 'Custom info came from PHP!',
+							   'viewPagerButtons' => false),
+		);
+
 		$this->table = 'tbl_customer';
 
-		#Make all columns editable by default
-		$this->cols_default = array('editable' => true);
-
-		#Set columns
 		$this->cols = array(
-			
+
 			'id'        =>array('label' => 'ID',
 								'width' => 10,
 								'align' => 'center',
-								'editable' => false, //id is non-editable
 								),
 
 			'first_name'=>array('label' => 'Frist name',
 								'width'	=> 35,
+								'editable' => true,
 								'editrules' => array('required' => true),
 								),
 
 			'last_name' =>array('label' => 'Last name',
 								'width' => 35,
+								'editable' => true,
 								'editrules' => array('required' => true),
 								),
 
 			'email'     =>array('label' => 'Email',
 								'width' => 30,
-								'editrules' => array('email' => true),
 								),
 
 			'phone'     =>array('label' => 'Phone',
@@ -43,11 +60,18 @@ class jq_simple extends jqGrid
 								'width'	=> 15,
 								'formatter' => 'numeric',
 								'align'	=> 'center',
-								'editable' => false,
 								),
 		);
+	}
 
-		#Set nav
-		$this->nav = array('add' => true, 'edit' => true, 'del' => true);
+	protected function renderNav($nav)
+	{
+		#Disable 'del' depending on condition
+		if(mt_rand(1, 10) > 5)
+		{
+			$nav['del'] = false;
+		}
+
+		return $nav;
 	}
 }

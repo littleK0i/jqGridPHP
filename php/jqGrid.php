@@ -103,8 +103,6 @@ abstract class jqGrid
 		$this->input	= $this->getInput();
 		$this->DB		= $loader->loadDB();
 
-		$this->json_mode = $this->input('_json_mode');
-
 		//----------------
 		// Init
 		//----------------
@@ -1011,20 +1009,15 @@ abstract class jqGrid
 	protected function renderComplete(array $data)
 	{
 		$code = '
-			</script>
+document.write(\'<table id="'.$data['id'].$data['suffix'].'"></table>\');
+document.write(\'<div id="'.$data['pager_id'].$data['suffix'].'"></div>\');
 
-			<!-- Grid HTML -->
-			<table id="'.$data['id'].$data['suffix'].'"></table>
-			<div id="'.$data['pager_id'].$data['suffix'].'"></div>
- 
-			<!-- Grid JS -->
-			<script>
-			var pager = "#'.$data['pager_id'].$data['suffix'].'";
+var pager = "#'.$data['pager_id'].$data['suffix'].'";
 
-			var $grid = $("#'.$data['id'].$data['suffix'].'");
-			var $'.$data['id'].$data['suffix'].' = $grid;
+var $grid = $("#'.$data['id'].$data['suffix'].'");
+var $'.$data['id'].$data['suffix'].' = $grid;
 
-			$grid.jqGrid(';
+$grid.jqGrid(';
 
 		if(isset($data['extend']) and $data['extend'])
 		{
@@ -1060,7 +1053,7 @@ abstract class jqGrid
 
 			if(isset($data['nav']['excel']) and $data['nav']['excel'])
 			{
-				$code .= '$grid.jqGrid("navButtonAdd", pager, {caption: "Excel", title: "Excel", icon: "ui-extlink", onClickButton: function(){ $(this).jqGrid("extExport", {"export" : "ExcelHtml", "rows": -1}); }});' . "\n";
+				$code .= '$grid.jqGrid("navButtonAdd", pager, {caption: "'.$data['nav']['exceltext'].'", title: "'.$data['nav']['exceltext'].'", icon: "ui-extlink", onClickButton: function(){ $(this).jqGrid("extExport", {"export" : "ExcelHtml", "rows": -1}); }});' . "\n";
 			}
 		}
 
@@ -1321,7 +1314,23 @@ abstract class jqGrid
 	 */
 	protected function json($obj)
 	{
-		switch($this->json_mode)
+		#Mode preset
+		if($this->json_mode)
+		{
+			$mode = $this->json_mode;
+		}
+		#Common jQuery request
+		elseif(isset($_SERVER['X-Requested-With']) and $_SERVER['X-Requested-With'] === 'XMLHttpRequest')
+		{
+			$mode = 'json';
+		}
+		#Probably ajaxForm iframe
+		else
+		{
+			$mode = 'ajaxForm';
+		}
+
+		switch($mode)
 		{
 			case 'ajaxForm':
 				header("Content-type: text/html; charset={$this->loader->get('encoding')};");

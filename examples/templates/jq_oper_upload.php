@@ -1,12 +1,19 @@
-<script>
+<style>
+.ui-jqgrid TR.jqgrow IMG
+{
+	margin: 2px;
+}
+</style>
 
+<script>
 var opts = 
 {
+	'caption'	: 'File Uploading',
 	'editurl'   : null, //this is required in order dataProxy to take effect
 	'dataProxy' : $.jgrid.ext.ajaxFormProxy //our charming dataProxy ^__^
 }
 
-<?=$jq_loader->render('jq_oper_upload');?>
+<?=$jq_loader->render('jq_oper_upload', 'opts');?>
 $grid.filterToolbar();
 
 </script>
