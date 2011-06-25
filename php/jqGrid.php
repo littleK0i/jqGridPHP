@@ -82,10 +82,6 @@ abstract class jqGrid
 	protected $reserved_col_names = array('page', 'sidx', 'sord', 'nd', 'parent', 'nlevel', 'expanded', 'isLeaf');
 	protected $internals = array('db', 'db_agg', 'unset', 'manual', 'search_op');
 
-	protected $hacks = array(
-		'implode_col_value'	=> true,
-	);
-
 	/**
 	 * Class constructor, initializes basic properties
 	 *
