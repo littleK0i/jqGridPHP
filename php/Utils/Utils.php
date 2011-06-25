@@ -75,7 +75,7 @@ class jqGrid_Utils
 
 		if( $val and strspn($val, $mask) != strlen($val) )
 		{
-			throw new jqGridException('Alphanum check failed on: ' . $val);
+			throw new jqGrid_Exception('Alphanum check failed on: ' . $val);
 		}
 
 		return $val;

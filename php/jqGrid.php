@@ -274,7 +274,7 @@ abstract class jqGrid
 	 *
 	 * @param string $extend name of javascript variable to extend PHP-rendered options
 	 * @param string $suffix suffix for grid_id. Use it if you need to set multiple grids on the same page
-	 * @return string pre-rendered HTML markup + JS function calls
+	 * @return string final javascript
 	 */
 	public function render($extend=null, $suffix=null)
 	{
@@ -353,6 +353,7 @@ abstract class jqGrid
 			'error_msg' => $e->getMessage(),
 			'error_code'=> $e->getCode(),
 			'error_data' => ($e instanceof jqGrid_Exception) ? $e->getData() : null,
+			'error_type' => ($e instanceof jqGrid_Exception) ? $e->getType() : null,
 		);
 
 		if($this->loader->get('debug_output'))
@@ -727,10 +728,10 @@ abstract class jqGrid
 	 */
 	protected function getInput()
 	{
-		$req = $_REQUEST; //dont modify the original request! ever!
+		$req = $_REQUEST; //do not modify the original request! ever!
 
-		#Ajax input is always utf-8
-		if($this->loader->get('encoding') != 'utf-8')
+		#Ajax input is always utf-8 -> convert it
+		if($this->loader->get('encoding') != 'utf-8' and isset($_SERVER['X-Requested-With']))
 		{
 			array_walk_recursive($req, array('jqGrid_Utils', 'iconvWalk'), 'utf-8', $this->loader->get('encoding'));
 		}
@@ -758,7 +759,7 @@ abstract class jqGrid
 		#Check for reserved names
 		if(strpos($k, '_') === 0)
 		{
-			throw new jqGrid_Exception("Column name must not begin with underscore!");
+			throw new jqGrid_Exception("Column name must NOT begin with underscore!");
 		}
 
 		#Name and index always matches the array key
@@ -911,7 +912,7 @@ abstract class jqGrid
 	 */
 	protected function outExport()
 	{
-		$type = $this->input('export');
+		$type = jqGrid_Utils::checkAlphanum($this->input('export'));
 
 		$class = 'jqGrid_Export_' . ucfirst($type);
 
@@ -1047,6 +1048,7 @@ $grid.jqGrid(';
 
 			$code .= ");\n";
 
+			#Excel button
 			if(isset($data['nav']['excel']) and $data['nav']['excel'])
 			{
 				$code .= '$grid.jqGrid("navButtonAdd", pager, {caption: "'.$data['nav']['exceltext'].'", title: "'.$data['nav']['exceltext'].'", icon: "ui-extlink", onClickButton: function(){ $(this).jqGrid("extExport", {"export" : "ExcelHtml", "rows": -1}); }});' . "\n";
@@ -1316,7 +1318,7 @@ $grid.jqGrid(';
 			$mode = $this->json_mode;
 		}
 		#Common jQuery request
-		elseif(isset($_SERVER['X-Requested-With']) and $_SERVER['X-Requested-With'] === 'XMLHttpRequest')
+		elseif(isset($_SERVER['X-Requested-With']))
 		{
 			$mode = 'json';
 		}
