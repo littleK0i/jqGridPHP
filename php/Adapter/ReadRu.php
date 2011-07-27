@@ -30,6 +30,8 @@ abstract class jqGrid_Adapter_ReadRu extends jqGrid
 	{
 		$this->default['cols']['null'] = '';
 		$this->output = output::getInstance();
+
+		$this->reserved_col_names = array_merge($this->reserved_col_names, array('section', 'act', 'module', 'oper'));
 	}
 
 	protected function afterInit()
@@ -134,5 +136,10 @@ abstract class jqGrid_Adapter_ReadRu extends jqGrid
 	protected function toTemplate($key, $val, $no_clean=false)
 	{
 		$this->output->toTemplate($key, $val, $no_clean);
+	}
+
+	protected function filterKeys($hash)
+	{
+		return array_diff_key($hash, array_flip($this->reserved_col_names));
 	}
 }

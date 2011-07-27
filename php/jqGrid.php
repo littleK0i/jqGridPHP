@@ -79,7 +79,7 @@ abstract class jqGrid
 		'options' => array(),
 	);
 
-	protected $reserved_col_names = array('page', 'sidx', 'sord', 'nd', 'parent', 'nlevel', 'expanded', 'isLeaf');
+	protected $reserved_col_names = array('page', 'sidx', 'sord', 'nd', 'parent', 'nlevel', 'expanded', 'isLeaf', 'oper');
 	protected $internals = array('db', 'db_agg', 'unset', 'manual', 'search_op');
 
 	/**
@@ -825,7 +825,7 @@ abstract class jqGrid
 		#Delete single value
 		if(is_numeric($id))
 		{
-			$this->DB->delete($this->table, $id);
+			$this->DB->delete($this->table, array($this->primary_key => $id));
 		}
 		#Delete multiple value
 		else
@@ -1318,7 +1318,7 @@ $grid.jqGrid(';
 			$mode = $this->json_mode;
 		}
 		#Common jQuery request
-		elseif(isset($_SERVER['X-Requested-With']))
+		elseif(isset($_SERVER['HTTP_X_REQUESTED_WITH']))
 		{
 			$mode = 'json';
 		}

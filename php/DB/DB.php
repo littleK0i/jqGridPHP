@@ -16,7 +16,7 @@ abstract class jqGrid_DB
 		$this->loader = $loader;
 	}
 
-	public function insert($tblName, array $ins, $last_id=false)
+	public function insert($tblName, array $ins, $last_insert_id=false)
 	{
 		$tblName = jqGrid_Utils::checkAlphanum($tblName);
 		$ins = $this->cleanArray($ins);
@@ -24,14 +24,14 @@ abstract class jqGrid_DB
 		$q = "INSERT INTO $tblName (" . implode(', ', array_keys($ins)) . ") VALUES (" . implode(', ', $ins) . ")";
 
 		#Special handling for PostgreSQL
-		if($last_id and $this->db_type == 'postgresql')
+		if($last_insert_id and $this->db_type == 'postgresql')
 		{
 			$q .= ' RETURNING *';
 		}
 
 		$result = $this->query($q);
 
-		if($last_id)
+		if($last_insert_id)
 		{
 			switch($this->db_type)
 			{
@@ -48,7 +48,7 @@ abstract class jqGrid_DB
 		return $result;
 	}
 
-	public function update($tblName, array $upd, $cond)
+	public function update($tblName, array $upd, $cond, $row_count=false)
 	{
 		$tblName = jqGrid_Utils::checkAlphanum($tblName);
 		$upd = $this->cleanArray($upd);
@@ -88,6 +88,11 @@ abstract class jqGrid_DB
 		$q = "UPDATE $tblName SET " . implode(', ', $set) . " WHERE " . ($where ? implode(' AND ', $where) : $cond);
 		
 		$result = $this->query($q);
+
+		if($row_count)
+		{
+			return $this->rowCount($result);
+		}
 
 		return $result;
 	}
