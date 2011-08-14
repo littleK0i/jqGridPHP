@@ -1,5 +1,8 @@
-!! IN DEVELOPMENT. DO NOT USE IN PRODUCTION!! 
+Server-side PHP library for jqGrid.
 
-Readme is coming soon.
+It supports most of jqGrid functions and easy to extend.
 
-Copyright (c) 2011 Vitaly Markov
+Examples: http://jqgrid-php.net/examples/
+Docs (russian only): http://jqgrid-php.net
+
+English docs will be available soon.
