@@ -1,6 +1,6 @@
 <script>
 
-<?=$jq_loader->render('jq_oper_custom');?>
+<?=$jq_loader->render('jqOperCustom');?>
 
 //custom button
 $grid.jqGrid("navButtonAdd", pager, 
@@ -30,4 +30,11 @@ $grid.jqGrid("navButtonAdd", pager,
 	Select some rows and give it a shot.<br><br>
 	
 	Please note the server-side price validation.
+</div>
+
+<div id="descr_rus">
+	Пример создания нестандартной пользовательской операции.<br>
+	Выберите несколько рядов и задайте им цену.<br><br>
+	
+	Обратите внимание на валидацию данных на стороне сервера при помощи исключений.
 </div>

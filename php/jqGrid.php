@@ -191,7 +191,7 @@ abstract class jqGrid
 		// Do output
 		//----------------
 
-		$callback = array($this, jqGrid_Utils::getFunctionName('out', $this->out));
+		$callback = array($this, jqGrid_Utils::score2camel('out', $this->out));
 
 		if(!is_callable($callback))
 		{
@@ -243,7 +243,7 @@ abstract class jqGrid
 			break;
 
 			default:
-				$callback = array($this, jqGrid_Utils::getFunctionName('op', $oper));
+				$callback = array($this, jqGrid_Utils::score2camel('op', $oper));
 
 				if(is_callable($callback))
 				{
@@ -731,9 +731,9 @@ abstract class jqGrid
 		$req = $_REQUEST; //do not modify the original request! ever!
 
 		#Ajax input is always utf-8 -> convert it
-		if($this->loader->get('encoding') != 'utf-8' and isset($_SERVER['X-Requested-With']))
+		if($this->loader->get('encoding') != 'utf-8' and isset($_SERVER['HTTP_X_REQUESTED_WITH']))
 		{
-			array_walk_recursive($req, array('jqGrid_Utils', 'iconvWalk'), 'utf-8', $this->loader->get('encoding'));
+			$req = jqGrid_Utils::arrayIconv($req, 'utf-8', $this->loader->get('encoding'));
 		}
 
 		return $req;
@@ -1087,7 +1087,7 @@ $grid.jqGrid(';
 			// Apply search operator
 			//------------------
 
-			$callback = array($this, jqGrid_Utils::getFunctionName('searchOp',$c['search_op']));
+			$callback = array($this, jqGrid_Utils::score2camel('searchOp',$c['search_op']));
 
 			if(!is_callable($callback))
 			{

@@ -1,6 +1,6 @@
 <script>
 
-<?=$jq_loader->render('jq_out_complex');?>
+<?=$jq_loader->render('jqOutComplex');?>
 $grid.filterToolbar();
 
 </script>
@@ -11,4 +11,9 @@ $grid.filterToolbar();
 	
 	You can <b>filter</b> and <b>sort</b> by result of aggregate function or sub-query like common values.<br>
 	It just works. No need for special handling at all. 
+</div>
+
+<div id="descr_rus">
+	Если необходимо использовать сложный SQL-запрос, включающий в себя GROUP BY или под-запросы - <b>оберните</b> его в дополнительный SELECT.<br><br>
+	Поиск и сортировка по всем полям будут работать как обычно.
 </div>

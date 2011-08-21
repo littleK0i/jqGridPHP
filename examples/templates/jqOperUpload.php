@@ -9,11 +9,11 @@
 var opts = 
 {
 	'caption'	: 'File Uploading',
-	'editurl'   : null, //this is required in order dataProxy to take effect
+	'editurl'   : null, //this is required for dataProxy effect
 	'dataProxy' : $.jgrid.ext.ajaxFormProxy //our charming dataProxy ^__^
 }
 
-<?=$jq_loader->render('jq_oper_upload', 'opts');?>
+<?=$jq_loader->render('jqOperUpload', 'opts');?>
 $grid.filterToolbar();
 
 </script>
@@ -22,4 +22,10 @@ $grid.filterToolbar();
 	Please upload any image below 2MB.<br>
 	Form data and file upload submit in a signle request.<br>
 	This approach requires 'jQuery ajaxForm' plugin.
+</div>
+
+<div id="descr_rus">
+	Загрузите изображение размером до 2MB.<br>
+	Все данные отправляются на сервер в одном запросе.<br>
+	Для отправки используется <b>jQuery Ajax Form</b> плагин.
 </div>

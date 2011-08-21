@@ -75,13 +75,16 @@ class jqGrid_Utils
 
 		if( $val and strspn($val, $mask) != strlen($val) )
 		{
-			throw new jqGrid_Exception('Alphanum check failed on: ' . $val);
+			throw new jqGrid_Exception('Alphanum check failed on value: ' . $val);
 		}
 
 		return $val;
 	}
 
-	public static function getFunctionName($prefix, $name)
+	/**
+	 * Convert 'under_score' to 'underScore'
+	 */
+	public static function score2camel($prefix, $name)
 	{
 		//underscores to camel
 		$parts = explode('_', $name);
@@ -94,8 +97,13 @@ class jqGrid_Utils
 	 * Callback for array_walk
 	 * PHP 5.2 does not support closures, so..
 	 */
-	public static function iconvWalk(&$val, $key, $enc_from, $enc_to)
+	public static function arrayIconv($arr, $enc_from, $enc_to)
 	{
-		$val = iconv($enc_from, $enc_to, $val);
+		foreach($arr as $k => &$v)
+		{
+			$v = iconv($enc_from, $enc_to, $v);
+		}
+		
+		return $arr;
 	}
 }

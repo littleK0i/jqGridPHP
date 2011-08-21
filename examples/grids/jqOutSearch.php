@@ -1,6 +1,6 @@
 <?php
 
-class jq_out_search extends jqGrid
+class jqOutSearch extends jqGrid
 {
 	protected function init()
 	{

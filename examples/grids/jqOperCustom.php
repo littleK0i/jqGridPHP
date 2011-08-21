@@ -1,6 +1,6 @@
 <?php
 
-class jq_oper_custom extends jqGrid
+class jqOperCustom extends jqGrid
 {
 	protected function init()
 	{

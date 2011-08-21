@@ -1,6 +1,6 @@
 <script>
 
-<?=$jq_loader->render('jq_general');?>
+<?=$jq_loader->render('jqGeneral');?>
 $grid.filterToolbar();
 
 $grid.jqGrid('navButtonAdd', pager, 

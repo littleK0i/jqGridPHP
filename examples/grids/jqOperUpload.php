@@ -1,6 +1,6 @@
 <?php
 
-class jq_oper_upload extends jqGrid
+class jqOperUpload extends jqGrid
 {
 	protected function init()
 	{

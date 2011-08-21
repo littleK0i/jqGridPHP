@@ -1,37 +1,31 @@
 <?php
 
-class jq_simple extends jqGrid
+class jqOutExcel extends jqGrid
 {
 	protected function init()
 	{
-		#Set database table
+		#This is all you need for simple Excel export
+		$this->nav = array('excel' => true);
+
 		$this->table = 'tbl_customer';
 
-		#Make all columns editable by default
-		$this->cols_default = array('editable' => true);
-
-		#Set columns
 		$this->cols = array(
-			
+
 			'id'        =>array('label' => 'ID',
 								'width' => 10,
 								'align' => 'center',
-								'editable' => false, //id is non-editable
 								),
 
 			'first_name'=>array('label' => 'Frist name',
 								'width'	=> 35,
-								'editrules' => array('required' => true),
 								),
 
 			'last_name' =>array('label' => 'Last name',
 								'width' => 35,
-								'editrules' => array('required' => true),
 								),
 
 			'email'     =>array('label' => 'Email',
 								'width' => 30,
-								'editrules' => array('email' => true),
 								),
 
 			'phone'     =>array('label' => 'Phone',
@@ -43,11 +37,7 @@ class jq_simple extends jqGrid
 								'width'	=> 15,
 								'formatter' => 'numeric',
 								'align'	=> 'center',
-								'editable' => false,
 								),
 		);
-
-		#Set nav
-		$this->nav = array('add' => true, 'edit' => true, 'del' => true);
 	}
 }

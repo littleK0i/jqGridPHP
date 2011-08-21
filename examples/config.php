@@ -12,36 +12,37 @@ $_CONFIG = array(
 
 $_SECTIONS = array(
 	'general'	=> array(
-		'name'	=> 'General',
-		'items' => array('simple'  => 'Basic grid',
-						 'cols'	   => 'New column options',
+		'name'	=> array('en' => 'General', 'ru' => 'Основные'),
+		'items' => array('simple'  => array('en' => 'Basic grid', 'ru' => 'Базовая таблица'),
+						 'cols'	   => array('en' => 'New column options', 'ru' => 'Новые опции колонок'),
 						 //'csv'     => 'Alternative data source',
 						),
 	),
 
 	'render'	=> array(
-		'name'	=> 'Rendering',
-		'items' => array('render_1' => 'Set grid options',
-						 'render_2' => 'Set nav options',
+		'name'	=> array('en' => 'Rendering', 'ru' => 'Рендеринг'),
+		'items' => array('render1' => array('en' => 'Set grid options', 'ru' => 'Опции таблицы'),
+						 'render2' => array('en' => 'Set nav options', 'ru' => 'Опции навигатора'),
 						 //'render_alt' => 'Alternative render',
 						),
 	),
 
 	'output'	=> array(
-		'name'	=> 'Output',
-		'items' => array('out_search' => 'Searching',
-						 'out_sort'   => 'Sorting',
-						 'out_excel' => 'Export to Excel',
-						 'out_complex'=> 'Complex queries',
+		'name'	=> array('en' => 'Output', 'ru' => 'Вывод данных'),
+		'items' => array('out_search' => array('en' => 'Searching', 'ru' => 'Поиск'),
+						 'out_sort'   => array('en' => 'Sorting', 'ru' => 'Сортировка'),
+						 'out_excel' => array('en' => 'Export to Excel', 'ru' => 'Экспорт в Excel'),
+						 'out_complex'=> array('en' => 'Complex queries', 'ru' => 'Сложные SQL-запросы'),
 						),
 	),
 
 	'oper'		=> array(
-		'name'	=> 'Operations',
-		'items' => array('oper_basic' => 'Extend basic oper',
-						 'oper_custom'=> 'Custom oper',
-						 //'oper_valid' => 'Server-side validation',
-						 'oper_upload' => 'Upload files',
+		'name'	=> array('en' => 'Operations', 'ru' => 'Операции'),
+		'items' => array('oper_basic' => array('en' => 'Extend basic oper', 'ru' => 'Расширение операций'),
+						 'oper_custom'=> array('en' => 'Custom oper', 'ru' => 'Пользовательские операции'),
+						 'oper_upload' => array('en' => 'Upload files', 'ru' => 'Загрузка файлов'),
 						),
 	),
 );
+
+$lang = 'ru';

@@ -21,7 +21,7 @@ $jq_loader->autorun();
 // Get grid
 //-----------
 
-$grid = isset($_REQUEST['render']) ? $_REQUEST['render'] : 'jq_simple';
+$grid = isset($_REQUEST['render']) ? $_REQUEST['render'] : 'jqSimple';
 $grid = preg_replace('#[^a-zA-Z0-9_-]#', '', $grid); //safe
 
 //-----------

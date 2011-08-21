@@ -1,6 +1,6 @@
 <?php
 
-class jq_render_2 extends jqGrid
+class jqRender2 extends jqGrid
 {
 	protected function init()
 	{

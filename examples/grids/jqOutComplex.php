@@ -1,6 +1,6 @@
 <?php
 
-class jq_out_complex extends jqGrid
+class jqOutComplex extends jqGrid
 {
 	protected function init()
 	{

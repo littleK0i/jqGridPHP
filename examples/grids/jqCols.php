@@ -1,6 +1,6 @@
 <?php
 
-class jq_cols extends jqGrid
+class jqCols extends jqGrid
 {
 	protected function init()
 	{
