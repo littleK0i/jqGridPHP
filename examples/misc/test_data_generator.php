@@ -12,6 +12,17 @@ class test_data_generator
 	public function run()
 	{
 		echo 'generating test data<br>';
+		
+		//-----------
+		// Get essential data
+		//-----------
+		
+		$first_names = array_map('trim', array_map('ucfirst', array_map('strtolower', file('misc/first_names.txt'))));
+		$last_names  = array_map('trim', array_map('ucfirst', array_map('strtolower', file('misc/last_names.txt'))));
+
+		$mail_suffix = array('@mail.ru', '@list.ru', '@gmail.com', '@yahoo.com', '@yandex.ru', '@inbox.ru');
+
+		$book_prefix = array('Life of', 'Death of', 'Boots of', 'Smile at', 'Laugh at', 'Lurk behind', 'Attack of', 'Toy for', 'Database on', 'Postgresql for', 'Mysql on', 'PC under', 'Macs for', 'Unlimited', 'Pirates kills', 'Parrot behind', 'Virtual', 'Default', 'Rendering of', 'Cartoons about', 'PHP for', 'jQuery rulez on', 'Mail for', 'Dinosaur bites', 'Random name for', 'Scary spider', 'Blue dragon', 'Final fantasy of', 'Black magic for', 'Frogs dream about');
 
 		//-----------
 		// Create tables
@@ -86,17 +97,29 @@ class test_data_generator
 			  PRIMARY KEY (`id`)
 			) ENGINE=InnoDB;
 		");
+		
+		$this->DB->query("
+			CREATE TABLE IF NOT EXISTS `tbl_tree` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `parent_id` int(11) unsigned NOT NULL,
+			  `node_name` text NOT NULL,
+			  `price` int(11) unsigned NOT NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB;
+		");
 
 		//-----------
 		// Truncate
 		//-----------
-
+		
 		$this->DB->query('TRUNCATE TABLE lst_delivery_types');
 		$this->DB->query('TRUNCATE TABLE tbl_books');
 		$this->DB->query('TRUNCATE TABLE tbl_customer');
 		$this->DB->query('TRUNCATE TABLE tbl_order');
 		$this->DB->query('TRUNCATE TABLE tbl_order_item');
-		$this->DB->query('TRUNCATE TABLE tbl_files');
+		//$this->DB->query('TRUNCATE TABLE tbl_files');
+		$this->DB->query('TRUNCATE TABLE tbl_tree');
+
 
 		//-----------
 		// Generate data
@@ -106,15 +129,8 @@ class test_data_generator
 		$this->DB->insert('lst_delivery_types', array('name' => 'Cash and carry'));
 		$this->DB->insert('lst_delivery_types', array('name' => 'DHL'));
 
-		$first_names = array_map('trim', array_map('ucfirst', array_map('strtolower', file('misc/first_names.txt'))));
-		$last_names  = array_map('trim', array_map('ucfirst', array_map('strtolower', file('misc/last_names.txt'))));
-
-		$mail_suffix = array('@mail.ru', '@list.ru', '@gmail.com', '@yahoo.com', '@yandex.ru', '@inbox.ru');
-
-		$book_prefix = array('Life of', 'Death of', 'Boots of', 'Smile at', 'Laugh at', 'Lurk behind', 'Attack of', 'Toy for', 'Database on', 'Postgresql for', 'Mysql on', 'PC under', 'Macs for', 'Unlimited', 'Pirates kills', 'Parrot behind', 'Virtual', 'Default', 'Rendering of', 'Cartoons about', 'PHP for', 'jQuery rulez on', 'Mail for', 'Dinosaur bites', 'Random name for', 'Scary spider', 'Blue dragon', 'Final fantasy of', 'Black magic for', 'Frogs dream about');
-
 		#Generate books
-		for($i=0;$i<= 10000;$i++)
+		for($i=0;$i<=10000;$i++)
 		{
 			$book = array(
 				'name' => $book_prefix[array_rand($book_prefix)] . ' ' . $first_names[array_rand($first_names)] . ' ' . $last_names[array_rand($last_names)],
@@ -172,6 +188,31 @@ class test_data_generator
 					}
 				}
 			}
+		}
+		
+		#tree
+		$main_nodes = array(
+			1 => 'Books',
+			2 => 'Games',
+			3 => 'Toys',
+			4 => 'Cards',
+			5 => 'Animals',
+		);
+		
+		foreach($main_nodes as $k => $v)
+		{
+			$this->DB->insert('tbl_tree', array('node_name' => $v, 'parent_id' => 0, 'price' => mt_rand(30, 1000)));
+		}
+		
+		for($i=6;$i<=500;$i++)
+		{
+			$ins = array(
+				'parent_id' => mt_rand(1, $i),
+				'node_name' => $book_prefix[array_rand($book_prefix)] . ' ' . $first_names[array_rand($first_names)],
+				'price' => mt_rand(30, 1000),
+			);
+			
+			$this->DB->insert('tbl_tree', $ins);
 		}
 
 		echo 'process complete!';

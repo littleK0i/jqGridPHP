@@ -4,7 +4,7 @@
 	<div>
 		<ul>
 		<? foreach($s['items'] as $item_id => $item_name): ?>
-			<li<? if(jqGrid_Utils::score2camel('jq', $item_id) == $grid): ?> class="active"<? endif; ?>><a href="?render=<?=jqGrid_Utils::score2camel('jq', $item_id)?>"><?=$item_name[$lang]?></a></li>
+			<li<? if(jqGrid_Utils::uscore2camel('jq', $item_id) == $grid): ?> class="active"<? endif; ?>><a href="?render=<?=jqGrid_Utils::uscore2camel('jq', $item_id)?>"><?=$item_name[$lang]?></a></li>
 		<? endforeach; ?>
 		</ul>
 	</div>

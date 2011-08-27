@@ -47,16 +47,25 @@ class jqGridLoader
 	 */
 	public function __call($func, $arg)
 	{
-		$grid = $this->load($arg[0]);
-		unset($arg[0]);
-
 		try
 		{
+			$grid = $this->load($arg[0]);
+			unset($arg[0]);
+
 			return call_user_func_array(array($grid, $func), $arg);
 		}
-		catch(Exception $e)
+		catch(jqGrid_Exception $e)
 		{
-			$grid->catchException($e);
+			#Grid internal exception
+			if(isset($grid))
+			{
+				return $grid->catchException($e);
+			}
+			#Loader exception
+			else
+			{
+				return $e;
+			}
 		}
 	}
 	
@@ -72,7 +81,14 @@ class jqGridLoader
 
 	public function load($name)
 	{
-		require_once($this->settings['grid_path'] . $name . '.php');
+		$file = $this->settings['grid_path'] . $name . '.php';
+		
+		if(!is_file($file))
+		{
+			throw new jqGrid_Exception_Render($name . ' not found!');
+		}
+		
+		require_once $file;
 		return new $name($this);
 	}
 
@@ -83,6 +99,9 @@ class jqGridLoader
 		return new $class($this);
 	}
 
+	/**
+	 * Sample controller function
+	 */
 	public function autorun()
 	{
 		$name = isset($_REQUEST[$this->settings['input_grid']]) ? $_REQUEST[$this->settings['input_grid']] : '';
@@ -102,6 +121,10 @@ class jqGridLoader
 		}
 	}
 
+	/**
+	 * jqGridPHP autoloader
+	 * It will process only class names starting with 'jqGrid_'
+	 */
 	protected function autoload($class)
 	{
 		#Not a jqGrid class
@@ -120,7 +143,7 @@ class jqGridLoader
 		#Extend class
 		else
 		{
-			$path = $this->root_path . implode(DS, array_slice($parts, 1, -1)) . DS . end($parts)  . '.php';
+			$path = $this->root_path . implode(DS, array_slice($parts, 1)) . '.php';
 		}
 
 		#Do not interfere with other autoloads

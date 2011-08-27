@@ -18,7 +18,12 @@ $.extend($.jgrid.defaults,
 	scrollOffset: 21,
 
 	width: 800,
-	height: 290
+	height: 290,
+	
+	loadComplete: function(data)
+	{
+		$.jgrid.ext.errorHandler(data);
+	}
 });
 
 //----------------

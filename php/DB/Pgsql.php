@@ -1,4 +1,8 @@
 <?php
+/**
+ * Sample PostgreSQL driver
+ * It's just an example - use PDO if you can
+ */
 
 class jqGrid_DB_Pgsql extends jqGrid_DB
 {
@@ -12,6 +16,11 @@ class jqGrid_DB_Pgsql extends jqGrid_DB
 		{
 			$connect = $this->loader->get('db_pg_connect');
 			$link = pg_connect($connect);
+
+			if(!$link)
+			{
+				throw new jqGrid_Exception_DB(pg_last_error());
+			}
 		}
 
 		return $link;
@@ -19,7 +28,14 @@ class jqGrid_DB_Pgsql extends jqGrid_DB
 
 	public function query($query)
 	{
-		return pg_query($this->link(), $query);
+		$result = pg_query($this->link(), $query);
+
+		if(!$result)
+		{
+			throw new jqGrid_Exception_DB(pg_last_error());
+		}
+
+		return $result;
 	}
 
 	public function fetch($result)

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Sample MySQL driver
+ * It's just an example - use PDO if you can
+ */
 
 class jqGrid_DB_Mysql extends jqGrid_DB
 {
@@ -14,9 +18,18 @@ class jqGrid_DB_Mysql extends jqGrid_DB
 			$user = $this->loader->get('db_user');
 			$pass = $this->loader->get('db_pass');
 			$name = $this->loader->get('db_name');
-			
+
 			$link = mysql_connect($host, $user, $pass);
-			mysql_select_db($name, $link);
+
+			if(!$link)
+			{
+				$this->throwMysqlException();
+			}
+
+			if(!mysql_select_db($name, $link))
+			{
+				$this->throwMysqlException();
+			}
 		}
 
 		return $link;
@@ -24,7 +37,14 @@ class jqGrid_DB_Mysql extends jqGrid_DB
 
 	public function query($query)
 	{
-		return mysql_query($query, $this->link());
+		$result = mysql_query($query, $this->link());
+
+		if(!$result)
+		{
+			$this->throwMysqlException();
+		}
+
+		return $result;
 	}
 
 	public function fetch($result)
@@ -44,6 +64,11 @@ class jqGrid_DB_Mysql extends jqGrid_DB
 
 	public function rowCount($result)
 	{
-		return mysql_affected_rows($result);
+		return mysql_affected_rows($this->link());
+	}
+
+	protected function throwMysqlException()
+	{
+		throw new jqGrid_Exception_DB(mysql_error(), null, mysql_errno());
 	}
 }

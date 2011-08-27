@@ -26,6 +26,17 @@ abstract class jqGrid_Adapter_ReadRu extends jqGrid
 		exit;
 	}
 
+	public function catchException(jqGrid_Exception $e)
+	{
+		if($e instanceof jqGrid_Exception_Render)
+		{
+			return parent::catchException($e) . "\n"
+			. '$grid = $("<table>"); pager = null; $.extend(null, {';
+		}
+
+		return parent::catchException($e);
+	}
+
 	protected function beforeInit()
 	{
 		$this->default['cols']['null'] = '';

@@ -100,6 +100,7 @@ abstract class jqGrid_DB
 	public function delete($tblName, $cond)
 	{
 		$tblName = jqGrid_Utils::checkAlphanum($tblName);
+		$where   = array();
 
 		#Build 'where'
 		if(is_numeric($cond))

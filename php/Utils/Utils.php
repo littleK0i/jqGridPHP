@@ -84,7 +84,7 @@ class jqGrid_Utils
 	/**
 	 * Convert 'under_score' to 'underScore'
 	 */
-	public static function score2camel($prefix, $name)
+	public static function uscore2camel($prefix, $name)
 	{
 		//underscores to camel
 		$parts = explode('_', $name);

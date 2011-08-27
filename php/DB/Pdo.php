@@ -1,4 +1,7 @@
 <?php
+/**
+ * The recommended PDO driver for jqGridPHP
+ */
 
 class jqGrid_DB_Pdo extends jqGrid_DB
 {
@@ -21,15 +24,29 @@ class jqGrid_DB_Pdo extends jqGrid_DB
 		$pass = $this->loader->get('pdo_pass');
 		$opts = $this->loader->get('pdo_options');
 
-		$link = new PDO($dsn, $user, $pass, $opts);
-		$link->setAttribute(PDO::ATTR_ERRMODE, 2);
+		try
+		{
+			$link = new PDO($dsn, $user, $pass, $opts);
+			$link->setAttribute(PDO::ATTR_ERRMODE, 2);
+		}
+		catch(PDOException $e)
+		{
+			throw new jqGrid_Exception_DB($e->getMessage(), null, $e->getCode());
+		}
 
 		return $link;
 	}
 
 	public function query($sql)
 	{
-		return $this->link()->query($sql);
+		try
+		{
+			return $this->link()->query($sql);
+		}
+		catch(PDOException $e)
+		{
+			throw new jqGrid_Exception_DB($e->getMessage(), null, $e->getCode());
+		}
 	}
 
 	public function fetch($result)

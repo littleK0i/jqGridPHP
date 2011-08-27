@@ -121,7 +121,7 @@ abstract class jqGrid
 	}
 
 	/**
-	 * Abstract function to custom grid properties
+	 * Abstract function for setting grid properties
 	 * 
 	 * @abstract
 	 * @return void
@@ -191,7 +191,7 @@ abstract class jqGrid
 		// Do output
 		//----------------
 
-		$callback = array($this, jqGrid_Utils::score2camel('out', $this->out));
+		$callback = array($this, jqGrid_Utils::uscore2camel('out', $this->out));
 
 		if(!is_callable($callback))
 		{
@@ -243,7 +243,7 @@ abstract class jqGrid
 			break;
 
 			default:
-				$callback = array($this, jqGrid_Utils::score2camel('op', $oper));
+				$callback = array($this, jqGrid_Utils::uscore2camel('op', $oper));
 
 				if(is_callable($callback))
 				{
@@ -286,8 +286,8 @@ abstract class jqGrid
 		// Render ids
 		//------------------
 		
-		$data['id'] = $this->grid_id;
-		$data['pager_id'] = $this->grid_id . '_p';
+		$data['id'] = $this->grid_id . $data['suffix'];
+		$data['pager_id'] = $this->grid_id . $data['suffix'] . '_p';
 		
 		//-----------------
 		// Render colModel
@@ -341,28 +341,35 @@ abstract class jqGrid
 
 	/**
 	 * All exceptions comes here
-	 * Override this method for custom error handling
+	 * Override this method for custom exception handling
 	 *
 	 * @param Exception $e
-	 * @return void
+	 * @return mixed
 	 */
-	public function catchException(Exception $e)
+	public function catchException(jqGrid_Exception $e)
 	{
-		$r = array(
-			'error'	    => 1,
-			'error_msg' => $e->getMessage(),
-			'error_code'=> $e->getCode(),
-			'error_data' => ($e instanceof jqGrid_Exception) ? $e->getData() : null,
-			'error_type' => ($e instanceof jqGrid_Exception) ? $e->getType() : null,
-		);
-
-		if($this->loader->get('debug_output'))
+		#More output types will be added
+		switch($e->getOutputType())
 		{
-			$r['error_string'] = (string)$e;
+			case 'json':
+				$r = array(
+					'error'	    => 1,
+					'error_msg' => $e->getMessage(),
+					'error_code'=> $e->getCode(),
+					'error_data' => $e->getData(),
+					'error_type' => $e->getExceptionType(),
+				);
+
+				if($this->loader->get('debug_output'))
+				{
+					$r['error_string'] = (string)$e;
+				}
+
+				$this->json($r);
+			break;
 		}
 
-		//header('HTTP/1.1 500 Internal Server Error');
-		$this->json($r);
+		return $e;
 	}
 
 	/**
@@ -1006,13 +1013,13 @@ abstract class jqGrid
 	protected function renderComplete(array $data)
 	{
 		$code = '
-document.write(\'<table id="'.$data['id'].$data['suffix'].'"></table>\');
-document.write(\'<div id="'.$data['pager_id'].$data['suffix'].'"></div>\');
+document.write(\'<table id="'.$data['id'].'"></table>\');
+document.write(\'<div id="'.$data['pager_id'].'"></div>\');
 
-var pager = "#'.$data['pager_id'].$data['suffix'].'";
+var pager = "#'.$data['pager_id'].'";
 
-var $grid = $("#'.$data['id'].$data['suffix'].'");
-var $'.$data['id'].$data['suffix'].' = $grid;
+var $grid = $("#'.$data['id'].'");
+var $'.$data['id'].' = $grid;
 
 $grid.jqGrid(';
 
@@ -1087,7 +1094,7 @@ $grid.jqGrid(';
 			// Apply search operator
 			//------------------
 
-			$callback = array($this, jqGrid_Utils::score2camel('searchOp',$c['search_op']));
+			$callback = array($this, jqGrid_Utils::uscore2camel('searchOp',$c['search_op']));
 
 			if(!is_callable($callback))
 			{

@@ -70,7 +70,7 @@ class jqGrid_Export_ExcelHtml extends jqGrid_Export
 			foreach($this->cols as $k => $c)
 			{
 				if($c['hidden']) continue;
-				$t .= '<td><b>' . (isset($this->userdata['agg'][$k]) ? str_replace('.', ',', $this->userdata['agg'][$k]) : '') . '</b></td>';
+				$t .= '<td align="' . $c['align'] . '"><b>' . (isset($this->userdata['agg'][$k]) ? str_replace('.', ',', $this->userdata['agg'][$k]) : '') . '</b></td>';
 			}
 			$t .= '</tr>';
 		}

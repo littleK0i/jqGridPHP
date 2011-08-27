@@ -3,7 +3,8 @@
 class jqGrid_Exception extends Exception
 {
 	protected $data;
-	protected $type = 'general';
+	protected $exception_type = 'common';
+	protected $output_type = 'json';
 	
 	public function __construct($message, $data=null, $code=0)
 	{
@@ -16,8 +17,13 @@ class jqGrid_Exception extends Exception
 		return $this->data;
 	}
 
-	public function getType()
+	public function getExceptionType()
 	{
-		return $this->type;
+		return $this->exception_type;
+	}
+
+	public function getOutputType()
+	{
+		return $this->output_type;
 	}
 }
