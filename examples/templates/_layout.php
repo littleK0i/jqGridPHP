@@ -53,7 +53,8 @@
 	</script>
 	
 	<style>
-	body {background: #F5F5F5; font-size: 11px; padding: 10px;}
+	bode {font-size: 11px;}
+	<?php if(!isset($_REQUEST['iframe'])) : ?>body {background: #F5F5F5; font-size: 11px; padding: 10px;}<?php endif;?>
 	#descr {display: none;}
 	#descr_rus {display: none;}
 	
@@ -77,6 +78,9 @@
 </head>
 
 <body>
+	<?php if(isset($_REQUEST['iframe'])) : ?>
+	<?php require 'templates/' . $grid . '.php'; ?>
+	<?php else : ?>
 	<table>
 	<tr>
 		<td width="260px" valign="top"><?php require 'templates/_accordion.php'; ?></td>
@@ -86,5 +90,6 @@
 		</td>
 	</tr>
 	</table>
+	<?php endif; ?>
 </body>
 </html>

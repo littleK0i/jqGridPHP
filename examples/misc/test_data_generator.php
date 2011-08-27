@@ -57,6 +57,7 @@ class test_data_generator
 			  `discount` decimal(4,2) NOT NULL DEFAULT '0.00',
 			  `date_register` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
 			  `date_birth` date DEFAULT NULL,
+			  `contract_type` tinyint(4) unsigned NOT NULL,
 			  PRIMARY KEY (`id`)
 			) ENGINE=InnoDB;
 		");
@@ -151,6 +152,7 @@ class test_data_generator
 				'discount'	 => mt_rand(0, 30) / 100,
 				'date_register' => date('Y-m-d H:i:s', mt_rand(strtotime('01.01.2011'), strtotime('10.06.2011'))),
 				'date_birth' => date('Y-m-d', mt_rand(strtotime('01.01.1950'), strtotime('01.01.2000'))),
+				'contract_type' => mt_rand(1,3),
 			);
 
 			$customer['email'] = strtolower($customer['first_name']) . mt_rand(10, 99) . $mail_suffix[array_rand($mail_suffix)];
