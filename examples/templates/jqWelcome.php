@@ -6,12 +6,12 @@ var opts = {
 	'height' : 240,
 	'width'  : 800,
 	
-	'footerrow': true,
+	//'footerrow': true,
 	
 	'gridComplete' : function()
 	{
 		$(this).jqGrid('extHighlight');
-		$(this).jqGrid('extFooterAgg');
+		//$(this).jqGrid('extFooterAgg');
 	}
 };
 
