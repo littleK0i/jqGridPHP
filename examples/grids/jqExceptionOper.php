@@ -19,7 +19,7 @@ class jqExceptionOper extends jqGrid
 								'editable' => false, //id is non-editable
 								),
 
-			'first_name'=>array('label' => 'Frist name',
+			'first_name'=>array('label' => 'First name',
 								'width'	=> 35,
 								'editrules' => array('required' => true),
 								'formoptions' => array('suffix' => 'gg'),
@@ -56,7 +56,7 @@ class jqExceptionOper extends jqGrid
 	{
 		if(strlen($r['first_name']) < 3)
 		{
-			throw new jqGrid_Exception('Frist name is too short');
+			throw new jqGrid_Exception('First name is too short');
 		}
 		
 		if(strlen($r['last_name']) < 3)

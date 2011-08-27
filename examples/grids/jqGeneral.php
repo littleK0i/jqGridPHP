@@ -19,7 +19,7 @@ class jqGeneral extends jqGrid
 								'search_op' => 'in',
 								),
 
-			'first_name'=>array('label' => 'Frist name',
+			'first_name'=>array('label' => 'First name',
 								'width'	=> 35,
 								'search_op' => 'in',
 								),

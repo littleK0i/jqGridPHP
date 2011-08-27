@@ -35,7 +35,7 @@ class jqRender2 extends jqGrid
 								'align' => 'center',
 								),
 
-			'first_name'=>array('label' => 'Frist name',
+			'first_name'=>array('label' => 'First name',
 								'width'	=> 35,
 								'editable' => true,
 								'editrules' => array('required' => true),

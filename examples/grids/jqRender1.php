@@ -22,7 +22,7 @@ class jqRender1 extends jqGrid
 								'align' => 'center',
 								),
 
-			'first_name'=>array('label' => 'Frist name',
+			'first_name'=>array('label' => 'First name',
 								'width'	=> 35,
 								),
 
