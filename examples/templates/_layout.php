@@ -29,6 +29,21 @@
 	<link rel="icon" href="misc/favicon.png" type="image/png"> 
 	
 	<script>
+	$.extend($.jgrid.defaults,
+	{
+		altRows: false,
+		altclass: 'altrow',
+		
+		hidegrid: false,
+		hoverrows: false,
+		
+		viewrecords: true,
+		scrollOffset: 21,
+
+		width: 800,
+		height: 290
+	});
+	
 	//$.jgrid.defaults.height = '400px';
 	$.jgrid.nav.refreshtext = 'Refresh';
 	$.jgrid.formatter.date.newformat = 'ISO8601Short';

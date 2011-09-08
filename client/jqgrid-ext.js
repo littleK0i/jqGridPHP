@@ -4,23 +4,11 @@
 
 $.extend($.jgrid.defaults,
 {
-	datatype: 'json',
-	mtype: 'POST',
+	'datatype'	: 'json',
+	'mtype'		: 'POST',
+	'loadui'	: 'block',
 	
-	altRows: false,
-	altclass: 'altrow',
-	
-	loadui: 'block',
-	hidegrid: false,
-	hoverrows: false,
-	
-	viewrecords: true,
-	scrollOffset: 21,
-
-	width: 800,
-	height: 290,
-	
-	loadComplete: function(data)
+	'loadComplete'	: function(data)
 	{
 		$.jgrid.ext.errorHandler(data);
 	}
@@ -86,7 +74,7 @@ $.extend($.jgrid.formatter,
 	{
 		'href'  : '#',
 		'class' : '',
-		'target': '_blank'
+		'target': ''
 	}
 });
 
@@ -96,6 +84,8 @@ $.extend($.fn.fmatter,
 	{
 		var def = options.ext_link;
 		var opt = options.colModel.formatoptions;
+		
+		opt = $.extend(null, def, opt);
 		
 		//Prevent creating new object every time!
 		var $grid = (typeof(window['$' + options.gid]) == 'object') ? window['$' + options.gid] : $('#' + options.gid);
@@ -122,7 +112,7 @@ $.extend($.fn.fmatter,
 			}
 		});
 		
-		return $.jgrid.format('<a href="{0}" class="{1}" target="{2}">{3}</a>', href, opt['class'], opt.target, cellvalue);
+		return $.jgrid.format('<a href="{0}" class="{1}" target="{2}">{3}</a>', href, opt['class'], opt['target'], cellvalue);
 	}
 });
 
@@ -351,17 +341,71 @@ $.jgrid.extend(
 		});
 	},
 	
-	/* under construction */
-	'extPreserve' : function()
+	'extGroupHeader': function(opts)
 	{
-		this.delegate('TR.jqgrow', 'click', function()
+		var $t = this[0];
+		
+		var $labels = $(this).closest('.ui-jqgrid-view').find('.ui-jqgrid-htable .ui-jqgrid-labels');
+		var $first_row = $labels.clone().removeClass('ui-jqgrid-labels').removeAttr('role');
+		var $group_row = $('<tr>');
+		
+		var $th = $('<th>').addClass('ui-state-default ui-th-ltr');
+
+		var skip = 0;
+		var free = 0;
+		
+		for(var i in $t.p.colModel)
 		{
-			var $grid = $(this).closest('.ui-jqgrid-btable');
-			
-			if($grid.jqGrid('getGridParam', 'multiselect'))
+			if($t.p.colModel[i].hidden)
 			{
-				
+				$th.clone().hide().appendTo($group_row);
+				continue;
 			}
-		});
+		
+			if(skip)
+			{
+				skip--;
+				continue;
+			}
+			
+			var idx = $t.p.colModel[i].name;
+			
+			if(opts[idx])
+			{
+				if(free)
+				{
+					$th.clone().attr('colspan', free).appendTo($group_row);
+					free = 0;
+				}
+				
+				$th.clone().attr('colspan', opts[idx][0]).text(opts[idx][1]).appendTo($group_row);
+				skip = opts[idx][0] - 1;
+			}
+			else
+			{
+				free++;
+			}
+		}
+		
+		//last free th
+		if(free)
+		{
+			$th.clone().attr('colspan', free).appendTo($group_row);
+		}
+		
+		$first_row.find('TH').height(0).text('');
+		$labels.before($first_row).before($group_row);
+		
+		//preserve orig event
+		if($.isFunction($t.p.resizeStop))
+		{
+			var resizeStop = $t.p.resizeStop;
+		}
+		
+		$t.p.resizeStop = function(nw,idx)
+		{
+			$first_row.find('TH').eq(idx).width(nw);
+			if($.isFunction(resizeStop)) resizeStop.call(this, nw, idx);
+		};
 	}
 });

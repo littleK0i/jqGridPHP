@@ -21,11 +21,11 @@ $_SECTIONS = array(
 	
 	'output'	=> array(
 		'name'	=> array('en' => 'Output', 'ru' => 'Вывод данных'),
-		'items' => array('out_search' => array('en' => 'Searching', 'ru' => 'Поиск'),
-						 'out_sort'   => array('en' => 'Sorting', 'ru' => 'Сортировка'),
-						 'out_excel' => array('en' => 'Export to Excel', 'ru' => 'Экспорт в Excel'),
-						 'out_complex'=> array('en' => 'Complex queries', 'ru' => 'Сложные SQL-запросы'),
-						 'out_tree'	 => array('en' => 'Tree grid', 'ru' => 'Вывод дерева'),
+		'items' => array('outSearch' => array('en' => 'Searching', 'ru' => 'Поиск'),
+						 'outSort'   => array('en' => 'Sorting', 'ru' => 'Сортировка'),
+						 'outExcel' => array('en' => 'Export to Excel', 'ru' => 'Экспорт в Excel'),
+						 'outComplex'=> array('en' => 'Complex queries', 'ru' => 'Сложные SQL-запросы'),
+						 'outTree'	 => array('en' => 'Tree grid', 'ru' => 'Вывод дерева'),
 						),
 	),
 
@@ -39,18 +39,25 @@ $_SECTIONS = array(
 
 	'oper'		=> array(
 		'name'	=> array('en' => 'Operations', 'ru' => 'Операции'),
-		'items' => array('oper_basic' => array('en' => 'Extend basic oper', 'ru' => 'Расширение операций'),
-						 'oper_custom'=> array('en' => 'Custom oper', 'ru' => 'Пользовательские операции'),
-						 'oper_upload' => array('en' => 'Upload files', 'ru' => 'Загрузка файлов'),
+		'items' => array('operBasic' => array('en' => 'Extend basic oper', 'ru' => 'Расширение операций'),
+						 'operCustom'=> array('en' => 'Custom oper', 'ru' => 'Пользовательские операции'),
+						 'operUpload' => array('en' => 'Upload files', 'ru' => 'Загрузка файлов'),
 						),
 	),
 	
 	'exception' => array(
 		'name'	=> array('en' => 'Exceptions', 'ru' => 'Обработка ошибок'),
-		'items' => array('exception_oper'	=> array('en' => 'Oper exception', 'ru' => 'Ошибки операций'),
-						 'exception_output' => array('en' => 'Output exceptions', 'ru' => 'Ошибки вывода данных'),
-						 'exception_render' => array('en' => 'Render exceptions', 'ru' => 'Ошибки рендеринга'),
+		'items' => array('exceptionOper'	=> array('en' => 'Oper exception', 'ru' => 'Ошибки операций'),
+						 'exceptionOutput' => array('en' => 'Output exceptions', 'ru' => 'Ошибки вывода данных'),
+						 'exceptionRender' => array('en' => 'Render exceptions', 'ru' => 'Ошибки рендеринга'),
 						 ),
+	),
+	
+	'other'	=> array(
+		'name'	=> array('en' => 'Other', 'ru' => 'Прочее'),
+		'items' => array('miscGroupHeader'		=> array('en' => 'Grouping header', 'ru' => 'Группировка заголовков'),
+						),
+						
 	),
 );
 

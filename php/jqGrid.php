@@ -81,6 +81,7 @@ abstract class jqGrid
 
 	protected $reserved_col_names = array('page', 'sidx', 'sord', 'nd', 'parent', 'nlevel', 'expanded', 'isLeaf', 'oper');
 	protected $internals = array('db', 'db_agg', 'unset', 'manual', 'search_op');
+	protected $query_placeholders = array('fields' => '{fields}', 'where' => '{where}');
 
 	/**
 	 * Class constructor, initializes basic properties
@@ -498,8 +499,8 @@ abstract class jqGrid
 		//-----------------
 
 		$replace = array(
-			'{where}'	=> $this->buildWhere($this->where, $this->where_glue, 'agg'),
-			'{fields}'	=> $this->buildFieldsAgg($this->cols),
+			$this->query_placeholders['where'] => $this->buildWhere($this->where, $this->where_glue, 'agg'),
+			$this->query_placeholders['fields']	=> $this->buildFieldsAgg($this->cols),
 		);
 
 		$q = strtr($q, $replace);
@@ -522,8 +523,8 @@ abstract class jqGrid
 		//-----------------
 
 		$replace = array(
-			'{where}'	=> $this->buildWhere($this->where, $this->where_glue, 'rows'),
-			'{fields}'	=> $this->buildFields($this->cols),
+			$this->query_placeholders['where']	=> $this->buildWhere($this->where, $this->where_glue, 'rows'),
+			$this->query_placeholders['fields']	=> $this->buildFields($this->cols),
 		);
 
 		$q = strtr($q, $replace);
