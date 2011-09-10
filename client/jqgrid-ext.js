@@ -393,7 +393,7 @@ $.jgrid.extend(
 			$th.clone().attr('colspan', free).appendTo($group_row);
 		}
 		
-		$first_row.find('TH').height(0).text('');
+		$first_row.find('TH').height(0).text('').removeAttr('role').removeAttr('id');
 		$labels.before($first_row).before($group_row);
 		
 		//preserve orig event
