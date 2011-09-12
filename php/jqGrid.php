@@ -1080,16 +1080,28 @@ $grid.jqGrid(';
 	 */
 	protected function search()
 	{
-		foreach($this->cols as $k => &$c)
+		foreach($this->cols as $k => $c)
 		{
-			if(!isset($this->input[$k]) or $this->input[$k] === '' or $c['manual'])
+			if(!isset($this->input[$k]) or $this->input[$k] === '')
 			{
 				continue;
 			}
-
-			if(is_array($this->input[$k])) continue;
-
-			$val = trim($this->DB->quote($this->input[$k]), "'");
+			
+			#Preserve original input value
+			$val = $this->input[$k];
+			
+			if(is_array($val))
+			{
+				foreach($val as $kk => $vv)
+				{
+					jqGrid_Utils::checkAlphanum($kk);
+					$val[$kk] = $this->searchCleanVal($vv);
+				}
+			}
+			else
+			{
+				$val = $this->searchCleanVal($val);
+			}
 
 			//------------------
 			// Apply search operator
@@ -1105,6 +1117,18 @@ $grid.jqGrid(';
 			$wh = call_user_func($callback, $c, $val);
 			if($wh) $this->where[] = $wh;
 		}
+	}
+	
+	protected function searchCleanVal($val)
+	{
+		$val = trim($val);
+		$val = $this->DB->quote($val);
+		
+		#Strip quotes for easier values handling
+		$start = (strpos($val, "E'") === 0) ? 2 : 1;
+		$val = substr($val, $start, -1);
+		
+		return $val;
 	}
 
 	/**
@@ -1161,7 +1185,6 @@ $grid.jqGrid(';
 	{
 		#Escape wildcards
 		$val = addcslashes($val, '%_');
-		$val = addcslashes($val, '\\');
 
 		$op = ($this->DB->getType() == 'postgresql') ? 'ILIKE' : 'LIKE';
 		
