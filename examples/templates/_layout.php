@@ -14,6 +14,8 @@
 	<link href="/jqgrid/css/ui.jqgrid.css" rel="stylesheet" type="text/css" />
 	<script src="/jqgrid/js/i18n/grid.locale-en.js"></script>
     <script src="/jqgrid/js/jquery.jqGrid.min.js"></script>
+	
+	<script src="/jqgrid/plugins/grid.setcolumns.js"></script>
 
 	<!--jqGrid Extension-->
 	<link href="/client/jqgrid-ext.css" rel="stylesheet" type="text/css" />

@@ -407,5 +407,92 @@ $.jgrid.extend(
 			$first_row.find('TH').eq(idx).width(nw);
 			if($.isFunction(resizeStop)) resizeStop.call(this, nw, idx);
 		};
+	},
+	
+	'updateGroupHeader' : function()
+	{
+		return this.each(function()
+		{
+			var $t = this;
+			if(!$t.grid || !$t.p.groupHeader) return;
+			
+			var $hDiv   = $($t.grid.hDiv);
+			var $labels = $hDiv.find('.ui-jqgrid-labels');
+			
+			var $first_row = $labels
+				.clone()
+				.removeClass('ui-jqgrid-labels')
+				.removeAttr('role')
+				.addClass('ui-jqgrid-labels-firstrow');
+				
+			$first_row.find('TH').height(0).text('').removeAttr('role').removeAttr('id');
+			
+			var $group_row = $('<tr>').addClass('ui-jqgrid-labels-grouprow');
+			
+			var th = '<th class="ui-state-default ui-th-' + $t.p.direction + '"></th>';
+			
+			//Iterate columns
+			var colspan = 0;
+			var prev_hgroup = null;
+			
+			for(var i in $t.p.colModel)
+			{
+				var col = $t.p.colModel[i];
+				var hgroup = col.hgroup ? col.hgroup : '';
+				
+				if(col.hidden) continue;
+				if(prev_hgroup === null)  prev_hgroup = hgroup; //first non-hidden column becomes initial group
+				
+				if(prev_hgroup == hgroup)
+				{
+					colspan++;
+				}
+				else
+				{
+					var $th = $(th).attr('colspan', colspan);
+					if($t.p.groupHeader[prev_hgroup]) $th.text($t.p.groupHeader[prev_hgroup].label);
+					$th.appendTo($group_row);
+					
+					prev_hgroup = hgroup;
+					colspan = 1;
+				}
+			}
+			
+			//Last th
+			if(colspan)
+			{
+				var $th = $(th).attr('colspan', colspan);
+				if($t.p.groupHeader[prev_hgroup]) $th.text($t.p.groupHeader[prev_hgroup].label);
+				$th.appendTo($group_row);
+			}
+			
+			//Update DOM
+			$hDiv.find('.ui-jqgrid-labels-firstrow, .ui-jqgrid-labels-grouprow').remove();
+			$labels.before($first_row).before($group_row);
+			
+			//Preserve orig event
+			//we have to move it to the core of resizing
+			if($.isFunction($t.p.resizeStop))
+			{
+				var resizeStop = $t.p.resizeStop;
+			}
+			
+			$t.p.resizeStop = function(nw,idx)
+			{
+				$first_row.find('TH').eq(idx).width(nw);
+				if($.isFunction(resizeStop)) resizeStop.call(this, nw, idx);
+			};
+		});
+	},
+	
+	'destroyGroupHeader' : function()
+	{
+		return this.each(function()
+		{
+			var $t = this;
+			if(!$t.grid) return;
+			
+			$($t.grid.hDiv).find('.ui-jqgrid-labels-firstrow, .ui-jqgrid-labels-grouprow').remove();
+		});
 	}
 });

@@ -1,5 +1,6 @@
 <?php
 require 'config.php';
+require 'sections.php';
 
 header("Content-Type: text/html; charset={$_CONFIG['encoding']};");
 

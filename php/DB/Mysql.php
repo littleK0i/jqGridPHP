@@ -59,7 +59,7 @@ class jqGrid_DB_Mysql extends jqGrid_DB
 			return null;
 		}
 
-		return "'" . mysql_real_escape_string($val, $this->link());
+		return "'" . mysql_real_escape_string($val, $this->link()) . "'";
 	}
 
 	public function rowCount($result)
