@@ -9,13 +9,14 @@
 	<!--jQuery UI-->
 	<script src="http://yandex.st/jquery-ui/1.8.11/jquery-ui.min.js"></script>
 	<link href="http://yandex.st/jquery-ui/1.8.11/themes/redmond/jquery.ui.all.min.css" rel="stylesheet" type="text/css"></link>
+	
+	<script src="/jqgrid/plugins/ui.multiselect.js"></script>
+	<link href="/jqgrid/plugins/ui.multiselect.css" rel="stylesheet" type="text/css" />
 
 	<!--jqGrid-->
 	<link href="/jqgrid/css/ui.jqgrid.css" rel="stylesheet" type="text/css" />
 	<script src="/jqgrid/js/i18n/grid.locale-en.js"></script>
     <script src="/jqgrid/js/jquery.jqGrid.min.js"></script>
-	
-	<script src="/jqgrid/plugins/grid.setcolumns.js"></script>
 
 	<!--jqGrid Extension-->
 	<link href="/client/jqgrid-ext.css" rel="stylesheet" type="text/css" />
