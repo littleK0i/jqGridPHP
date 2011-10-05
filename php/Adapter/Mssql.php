@@ -5,7 +5,6 @@
 
 abstract class jqGrid_Adapter_Mssql extends jqGrid
 {
-	#Disable query_agg by default
 	protected $do_sort = false;
 	protected $do_limit = false;
 	
@@ -27,7 +26,6 @@ abstract class jqGrid_Adapter_Mssql extends jqGrid
 	{
 		$query = parent::buildQueryRows($q);
 		
-		#Calc offset
 		$offset_min = max($this->page * $this->limit - $this->limit, 0) + 1;
 		$offset_max = $offset_min + $this->limit;
 		
