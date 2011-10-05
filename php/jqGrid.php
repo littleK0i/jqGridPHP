@@ -24,6 +24,7 @@ abstract class jqGrid
 	
 	protected $where  = array();
 	protected $where_glue = ' AND ';
+	protected $where_empty = 'true';
 
 	protected $query;
 	protected $query_agg;
@@ -32,6 +33,9 @@ abstract class jqGrid
 	
 	protected $do_agg = true;
 	protected $do_search = true;
+	protected $do_sort = true;
+	protected $do_limit = true;
+	
 	protected $treegrid = false; //'adjacency'!, 'nested' is not supported
 
 	protected $options = array();
@@ -533,8 +537,8 @@ abstract class jqGrid
 		// ORDER BY, LIMIT, OFFSET
 		//-----------------
 
-		$q .= $this->buildOrderBy($this->sidx, $this->sord) . "\n";
-		$q .= $this->buildLimitOffset($this->limit, $this->page) . "\n";
+		if($this->do_sort) $q .= $this->buildOrderBy($this->sidx, $this->sord) . "\n";
+		if($this->do_limit) $q .= $this->buildLimitOffset($this->limit, $this->page) . "\n";
 
 		$this->debug['query_rows'] = $q;
 
@@ -649,7 +653,7 @@ abstract class jqGrid
 	 */
 	protected function buildWhere(array $where, $glue, $type)
 	{
-		return $where ? implode($glue, $where) : 'true';
+		return $where ? implode($glue, $where) : $this->where_empty;
 	}
 
 	/**

@@ -24,8 +24,8 @@ $grid.navButtonAdd(pager, { caption:"Column chooser", buttonicon:"ui-icon-newwin
 {
 	$grid.jqGrid('columnChooser', {'done' : function(perm)
 	{
-		//this.jqGrid("remapColumns", perm, true, false);
-		$grid.jqGrid('updateGroupHeader');
+		//this.jqGrid("remapColumns", perm, true);
+		this.jqGrid('updateGroupHeader');
 	}});
 }}); 
 </script>
