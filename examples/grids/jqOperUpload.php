@@ -23,6 +23,7 @@ class jqOperUpload extends jqGrid
 								'width' => 14,
 								'manual' => true, //manually create images in PHP
 				 				                  //you can use JS formatter instead
+								'encode' => false,
 								),
 			
 			'filename'  =>array('label' => 'Filename',

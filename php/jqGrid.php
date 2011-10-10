@@ -69,6 +69,7 @@ abstract class jqGrid
 			'classes'   => '',
 			'align'	    => 'left',
 			'null'		=> null,
+			'encode'	=> true,
 		),
 
 		'nav'	=> array(
@@ -427,6 +428,9 @@ abstract class jqGrid
 
 		#Easy replace values
 		if($c['replace']) $val = isset($c['replace'][$val]) ? $c['replace'][$val] : $val;
+		
+		#Encode before output
+		if($c['encode']) $val = $this->outputEncodeValue($c, $val);
 
 		return $val;
 	}
@@ -937,6 +941,11 @@ abstract class jqGrid
 		$lib = new $class($this->loader, $this, $this->input);
 		$this->setExportData($lib);
 		$lib->doExport();
+	}
+	
+	protected function outputEncodeValue($c, $val)
+	{
+		return htmlspecialchars($val, ENT_QUOTES);
 	}
 
 	/**
