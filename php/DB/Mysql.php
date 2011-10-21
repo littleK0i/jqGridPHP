@@ -66,6 +66,11 @@ class jqGrid_DB_Mysql extends jqGrid_DB
 	{
 		return mysql_affected_rows($this->link());
 	}
+	
+	public function lastInsertId()
+	{
+		return mysql_insert_id($this->link);
+	}
 
 	protected function throwMysqlException()
 	{

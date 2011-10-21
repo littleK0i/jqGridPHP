@@ -52,7 +52,6 @@ class jqGrid_DB_Mssql extends jqGrid_DB
 		return str_replace("'", "''", $string);
     }
 
-
     public function quote($val)
     {
         if(is_null($val))

@@ -35,12 +35,16 @@ abstract class jqGrid_DB
 		{
 			switch($this->db_type)
 			{
-				case 'postgresql';
+				case 'postgresql':
 					return array_shift($this->fetch($result));
+					break;
+					
+				case 'mssql':
+					return array_shift($this->fetch($this->query("SELECT @@IDENTITY AS mixLastId")));
 					break;
 
 				default:
-					return $this->link()->lastInsertId();
+					return $this->lastInsertId();
 					break;
 			}
 		}
@@ -129,6 +133,11 @@ abstract class jqGrid_DB
 		$result = $this->query($q);
 
 		return $result;
+	}
+	
+	public function lastInsertId()
+	{
+		return null;
 	}
 
 	public function getType()

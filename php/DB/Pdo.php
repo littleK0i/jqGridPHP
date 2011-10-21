@@ -68,4 +68,9 @@ class jqGrid_DB_Pdo extends jqGrid_DB
 	{
 		return $result->rowCount();
 	}
+	
+	public function lastInsertId($name=null)
+	{
+		return $this->link()->lastInsertId($name);
+	}
 }
