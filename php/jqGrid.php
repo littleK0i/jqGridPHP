@@ -385,7 +385,7 @@ abstract class jqGrid
 	 * @param array $row raw data from database
 	 * @return void
 	 */
-	protected function addRow(array $row)
+	protected function addRow($row)
 	{
 		#Allow modification of result row without annoying overloading of 'addRow'
 		$row = $this->parseRow($row);
@@ -419,7 +419,7 @@ abstract class jqGrid
 	 * @param array $row - data row
 	 * @return mixed - final cell value
 	 */
-	protected function addRowCell(array $c, array $row)
+	protected function addRowCell($c, $row)
 	{
 		$val = isset($row[$c['name']]) ? $row[$c['name']] : null;
 		
@@ -443,7 +443,7 @@ abstract class jqGrid
 	 * @param array $row - data row
 	 * @return array - modified $cell
 	 */
-	protected function addRowComplete($id, array $cell, array $row)
+	protected function addRowComplete($id, $cell, $row)
 	{
 		//----------------
 		// TreeGrid handling
@@ -555,7 +555,7 @@ abstract class jqGrid
 	 * @param  array $cols grid columns
 	 * @return string imploded list
 	 */
-	protected function buildFields(array $cols)
+	protected function buildFields($cols)
 	{
 		$fields = array();
 
@@ -655,7 +655,7 @@ abstract class jqGrid
 	 * @param  string $glue - ' AND ' or ' OR '
 	 * @return string - 'agg' or 'rows' query type, if you need the different conditions
 	 */
-	protected function buildWhere(array $where, $glue, $type)
+	protected function buildWhere($where, $glue, $type)
 	{
 		return $where ? implode($glue, $where) : $this->where_empty;
 	}
@@ -725,7 +725,7 @@ abstract class jqGrid
 	 * @param array $userdata orignal value
 	 * @return array final value
 	 */
-	protected function getDataUser(array $userdata)
+	protected function getDataUser($userdata)
 	{
 		#Agg
 		if($this->agg)
@@ -764,7 +764,7 @@ abstract class jqGrid
 	 * @param array $c - user-inputed non-default column params
 	 * @return array - complete column
 	 */
-	protected function initColumn($k, array $c)
+	protected function initColumn($k, $c)
 	{
 		#Check reserved keys
 		if(in_array($k, $this->reserved_col_names))
@@ -813,7 +813,7 @@ abstract class jqGrid
 	 * @param  array $ins form data
 	 * @return integer|string new_id
 	 */
-	protected function opAdd(array $ins)
+	protected function opAdd($ins)
 	{
 		return $this->DB->insert($this->table, $ins, true);
 	}
@@ -825,7 +825,7 @@ abstract class jqGrid
 	 * @param  array $upd form data
 	 * @return void
 	 */
-	protected function opEdit($id, array $upd)
+	protected function opEdit($id, $upd)
 	{
 		$this->DB->update($this->table, $upd, array($this->primary_key => $id));
 	}
@@ -862,7 +862,7 @@ abstract class jqGrid
 	 * @param  array $r form data
 	 * @return array modified form data
 	 */
-	protected function operData(array $r)
+	protected function operData($r)
 	{
 		return $r;
 	}
@@ -954,7 +954,7 @@ abstract class jqGrid
 	 * @param  array $r row data
 	 * @return array modified row data
 	 */
-	protected function parseRow(array $r)
+	protected function parseRow($r)
 	{
 		return $r;
 	}
@@ -969,7 +969,7 @@ abstract class jqGrid
 	 * @param array $c col properties
 	 * @return array col properties to be rendered
 	 */
-	protected function renderColumn(array $c)
+	protected function renderColumn($c)
 	{
 		return $c;
 	}
@@ -990,7 +990,7 @@ abstract class jqGrid
 	 * @param  $nav original nav
 	 * @return array modified nav
 	 */
-	protected function renderNav(array $nav)
+	protected function renderNav($nav)
 	{
 		return $nav;
 	}
@@ -1001,7 +1001,7 @@ abstract class jqGrid
 	 * @param  array $opts original options
 	 * @return array modified options
 	 */
-	protected function renderOptions(array $opts)
+	protected function renderOptions($opts)
 	{
 		return $opts;
 	}
@@ -1024,7 +1024,7 @@ abstract class jqGrid
 	 * @param array $data
 	 * @return string
 	 */
-	protected function renderComplete(array $data)
+	protected function renderComplete($data)
 	{
 		$code = '
 document.write(\'<table id="'.$data['id'].'"></table>\');
