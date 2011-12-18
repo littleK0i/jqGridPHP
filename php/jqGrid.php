@@ -337,6 +337,12 @@ abstract class jqGrid
 		{
 			$data['nav'] = $this->renderNav(array_merge($this->default['nav'], $this->nav));
 		}
+		
+		//------------------
+		// Render base html
+		//------------------
+		
+		$data['html'] = $this->renderHtml($data);
 
 		//-----------------
 		// Compile the final string
@@ -983,6 +989,14 @@ abstract class jqGrid
 	{
 		return '?' . http_build_query(array($this->loader->get('input_grid') => $this->grid_id));
 	}
+	
+	protected function renderHtml($data)
+	{
+		return '
+document.write(\'<table id="'.$data['id'].'"></table>\');
+document.write(\'<div id="'.$data['pager_id'].'"></div>\');
+		';
+	}
 
 	/**
 	 * (Render) Alter 'nav'
@@ -1026,9 +1040,7 @@ abstract class jqGrid
 	 */
 	protected function renderComplete($data)
 	{
-		$code = '
-document.write(\'<table id="'.$data['id'].'"></table>\');
-document.write(\'<div id="'.$data['pager_id'].'"></div>\');
+		$code = $data['html'] . '
 
 var pager = "#'.$data['pager_id'].'";
 

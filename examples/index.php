@@ -31,6 +31,11 @@ $grid = preg_replace('#[^a-zA-Z0-9_-]#', '', $grid); //safe
 
 $source_php = file_get_contents('grids/' . $grid . '.php');
 
+if(file_exists('grids/' . $grid . '2.php'))
+{
+	$source_php2 = file_get_contents('grids/' . $grid . '2.php');
+}
+
 $source_tpl = file_get_contents('templates/' . $grid . '.php');
 
 preg_match('#<script>(.+)<\/script>#is', $source_tpl, $m);

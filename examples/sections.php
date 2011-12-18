@@ -47,6 +47,7 @@ $_SECTIONS = array(
 		'name'	=> array('en' => 'Other', 'ru' => 'Прочее'),
 		'items' => array('miscGroupHeader'		=> array('en' => 'Grouping header', 'ru' => 'Группировка заголовков'),
 						 'miscGroupHeaderEx'	=> array('en' => 'Grouping header 2', 'ru' => 'Группировка заголовков 2'),
+						 'miscSubgrid'			=> array('en' => 'Grid as subgrid', 'ru' => 'Вложенные таблицы'),
 						),
 						
 	),
