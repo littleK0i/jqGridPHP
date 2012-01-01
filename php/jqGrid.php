@@ -35,6 +35,8 @@ abstract class jqGrid
 	protected $do_search = true;
 	protected $do_sort = true;
 	protected $do_limit = true;
+
+	protected $render_html = 'classic'; //replace with 'js' to get back to 'document.write'
 	
 	protected $treegrid = false; //'adjacency'!, 'nested' is not supported
 
@@ -73,7 +75,7 @@ abstract class jqGrid
 		),
 
 		'nav'	=> array(
-			'add'	=> false,
+			'add' => false,
 			'edit'	=> false,
 			'del'	=> false,
 			'refresh' => true,
@@ -210,7 +212,7 @@ abstract class jqGrid
 	/**
 	 * MAIN ACTION (2): Perform operation to change data is any way
 	 *
-	 * @throws jqGrid_Exception
+	 * @param $oper - operation name
 	 * @return void
 	 */
 	public function oper($oper)
@@ -355,7 +357,7 @@ abstract class jqGrid
 	 * All exceptions comes here
 	 * Override this method for custom exception handling
 	 *
-	 * @param Exception $e
+	 * @param jqGrid_Exception $e
 	 * @return mixed
 	 */
 	public function catchException(jqGrid_Exception $e)
@@ -388,7 +390,7 @@ abstract class jqGrid
 	 * (Output) Add new row to result set
 	 * And also do related stuff
 	 *
-	 * @param array $row raw data from database
+	 * @param array $row - raw data from database
 	 * @return void
 	 */
 	protected function addRow($row)
@@ -489,7 +491,7 @@ abstract class jqGrid
 
 	/**
 	 * Custom actions before 'init'
-	 * Place your signletons init here
+	 * Place your singletons init here
 	 */
 	protected function beforeInit()
 	{
@@ -503,8 +505,8 @@ abstract class jqGrid
 	/**
 	 * (Output) Build complete AGG-query
 	 *
-	 * @param  string $q base query
-	 * @return string complete query
+	 * @param  string $q - base query
+	 * @return string - final query
 	 */
 	protected function buildQueryAgg($q)
 	{
@@ -519,16 +521,14 @@ abstract class jqGrid
 
 		$q = strtr($q, $replace);
 
-		$this->debug['query_agg'] = $q;
-
 		return $q;
 	}
 
 	/**
 	 * (Output) Build complete ROWS-query
 	 *
-	 * @param  string $q base query
-	 * @return string complete query
+	 * @param  string $q - base query
+	 * @return string - final query
 	 */
 	protected function buildQueryRows($q)
 	{
@@ -550,16 +550,14 @@ abstract class jqGrid
 		if($this->do_sort) $q .= $this->buildOrderBy($this->sidx, $this->sord) . "\n";
 		if($this->do_limit) $q .= $this->buildLimitOffset($this->limit, $this->page) . "\n";
 
-		$this->debug['query_rows'] = $q;
-
 		return $q;
 	}
 
 	/**
 	 * (Output) Implode {fields} for ROWS-query using 'db' property
 	 *
-	 * @param  array $cols grid columns
-	 * @return string imploded list
+	 * @param  array $cols - grid columns
+	 * @return string - imploded list
 	 */
 	protected function buildFields($cols)
 	{
@@ -576,10 +574,10 @@ abstract class jqGrid
 	}
 
 	/**
-	 * (Output) Implode {fields} for AGG-query useing 'db_agg' property
+	 * (Output) Implode {fields} for AGG-query using 'db_agg' property
 	 *
-	 * @param  array $cols grid columns
-	 * @return string imploded list
+	 * @param  array $cols - grid columns
+	 * @return string - imploded list
 	 */
 	protected function buildFieldsAgg($cols)
 	{
@@ -639,27 +637,29 @@ abstract class jqGrid
 	 * (Output) Builds sorting for ROWS-query
 	 * Overload it to introduce more complex
 	 *
-	 * Input is checked in 'getOutputParamas', so we trust it
+	 * Input is checked in 'getOutputParams', so we trust it
 	 *
-	 * @param  string $sidx field
-	 * @param  string $sord order
+	 * @param  string $sidx - field name
+	 * @param  string $sord - order (asc, desc)
 	 * @return string
 	 */
 	protected function buildOrderBy($sidx, $sord)
 	{
 		if($sidx and $sord)
 		{
-			 return "ORDER BY $sidx $sord";
+			return "ORDER BY $sidx $sord";
 		}
+
+		return '';
 	}
 
 	/**
 	 * (Output) Builds {where} both for ROWS and AGG queries
-	 * Simple imploding for now
 	 *
-	 * @param  array $where - filtering SQL-expressions
-	 * @param  string $glue - ' AND ' or ' OR '
-	 * @return string - 'agg' or 'rows' query type, if you need the different conditions
+	 * @param array $where - array with conditions
+	 * @param string $glue - glue string (' AND ', ' OR ')
+	 * @param string $type - query type ('agg', 'rows')
+	 * @return string - imploded condition string
 	 */
 	protected function buildWhere($where, $glue, $type)
 	{
@@ -692,7 +692,7 @@ abstract class jqGrid
 	{
 		$this->page  = max(1, intval($this->input('page', 1)));
 		$this->limit = max(-1, intval($this->input['rows']));
-		$this->sidx  = $this->input('sidx') ? jqGrid_Utils::checkAlphanum($this->input('sidx')) : '';
+		$this->sidx  = $this->input('sidx') ? jqGrid_Utils::checkAlphanum($this->input('sidx')) : $this->primary_key;
 		$this->sord  = in_array($this->input('sord'), array('asc', 'desc')) ? $this->input('sord') : 'asc';
 
 		$this->out   = $this->input('_out', 'json');
@@ -700,7 +700,7 @@ abstract class jqGrid
 
 	/**
 	 * (Output) Get AGG data - over the whole result set
-	 * Saves it to $this->agg
+	 * Save it to $this->agg
 	 */
 	protected function getDataAgg()
 	{
@@ -708,11 +708,13 @@ abstract class jqGrid
 		$result = $this->DB->query($query);
 		
 		$this->agg = $this->DB->fetch($result);
+		
+		$this->debug['query_agg'] = $query;
 	}
 
 	/**
 	 * (Output) Get ROWS data - the current page
-	 * Saves it to $this->rows via 'addRow'
+	 * Save it to $this->rows via 'addRow'
 	 */
 	protected function getDataRows()
 	{
@@ -723,13 +725,15 @@ abstract class jqGrid
 		{
 			$this->addRow($r);
 		}
+		
+		$this->debug['query_rows'] = $query;
 	}
 
 	/**
 	 * (Output) Build 'userdata'
 	 *
-	 * @param array $userdata orignal value
-	 * @return array final value
+	 * @param array $userdata - orignal value
+	 * @return array - final value
 	 */
 	protected function getDataUser($userdata)
 	{
@@ -744,9 +748,10 @@ abstract class jqGrid
 
 
 	/**
-	 * This is the only entry-point for external data
+	 * This is the ONLY entry-point for external data
+	 * Use it for advanced filtering
 	 *
-	 * @return array final input
+	 * @return array - prepared input
 	 */
 	protected function getInput()
 	{
@@ -763,11 +768,10 @@ abstract class jqGrid
 
 	/**
 	 * Inits one column
-	 * Apply defaults etc.
+	 * Apply defaults, check name etc.
 	 *
-	 * @throws jqGrid_Exception
 	 * @param string $k - column name
-	 * @param array $c - user-inputed non-default column params
+	 * @param array $c - non-default column params
 	 * @return array - complete column
 	 */
 	protected function initColumn($k, $c)
@@ -814,10 +818,10 @@ abstract class jqGrid
 	/**
 	 * (Oper) Insert
 	 *
-	 * Please note: this is the only "Oper" function, that must return new row id
+	 * Please note: this is the only "Oper" function, which must return new row id
 	 *
-	 * @param  array $ins form data
-	 * @return integer|string new_id
+	 * @param  array $ins - form data
+	 * @return integer - new_id
 	 */
 	protected function opAdd($ins)
 	{
@@ -827,8 +831,8 @@ abstract class jqGrid
 	/**
 	 * (Oper) Update
 	 *
-	 * @param  integer $id - row_id to update
-	 * @param  array $upd form data
+	 * @param  integer $id - id to update
+	 * @param  array $upd - form data
 	 * @return void
 	 */
 	protected function opEdit($id, $upd)
@@ -865,8 +869,8 @@ abstract class jqGrid
 	 * (Oper) Modify form data for opAdd and opEdit only
 	 * These operations usually need the same modifications, so i made a stand-alone hook for them
 	 * 
-	 * @param  array $r form data
-	 * @return array modified form data
+	 * @param  array $r - form data
+	 * @return array - modified form data
 	 */
 	protected function operData($r)
 	{
@@ -877,7 +881,7 @@ abstract class jqGrid
 	 * (Oper) Hook after opAdd and opEdit
 	 * Useful for uploading images after processing other data etc.
 	 *
-	 * @param $id id of updated or inserted row
+	 * @param $id - id of updated or inserted row
 	 * @return void
 	 */
 	protected function operAfterAddEdit($id)
@@ -889,7 +893,7 @@ abstract class jqGrid
 	 * (Oper) Hook after ALL oper's
 	 * Useful for cleanup and dropping caches
 	 *
-	 * @param  $oper
+	 * @param  $oper - operation name
 	 * @return void
 	 */
 	protected function operComplete($oper)
@@ -944,11 +948,18 @@ abstract class jqGrid
 		}
 
 		#Weird >__<
-		$lib = new $class($this->loader, $this, $this->input);
+		$lib = new $class($this->loader);
 		$this->setExportData($lib);
 		$lib->doExport();
 	}
-	
+
+	/**
+	 * (Output) Encode each row value before output
+	 *
+	 * @param $c - column
+	 * @param $val - value
+	 * @return string - encoded value
+	 */
 	protected function outputEncodeValue($c, $val)
 	{
 		return htmlspecialchars($val, ENT_QUOTES);
@@ -957,8 +968,8 @@ abstract class jqGrid
 	/**
 	 * (Output) Modify row data before output
 	 *
-	 * @param  array $r row data
-	 * @return array modified row data
+	 * @param  array $r - row data
+	 * @return array - modified row data
 	 */
 	protected function parseRow($r)
 	{
@@ -972,8 +983,8 @@ abstract class jqGrid
 	/**
 	 * (Render) Render single column
 	 *
-	 * @param array $c col properties
-	 * @return array col properties to be rendered
+	 * @param array $c - col properties
+	 * @return array - modified col properties
 	 */
 	protected function renderColumn($c)
 	{
@@ -981,7 +992,7 @@ abstract class jqGrid
 	}
 
 	/**
-	 * (Render) Base url to pass into 'url', 'editurl', 'cellurl'
+	 * (Render) Base url is used into 'url', 'editurl', 'cellurl' options
 	 *
 	 * @return string
 	 */
@@ -989,13 +1000,37 @@ abstract class jqGrid
 	{
 		return '?' . http_build_query(array($this->loader->get('input_grid') => $this->grid_id));
 	}
-	
+
+	/**
+	 * (Render) There are few ways to create basic html markup for jqGrid
+	 * You may alter this if you want yours
+	 * 
+	 * @param $data - render data
+	 * @return string - string to be added before .jqGrid call
+	 */
 	protected function renderHtml($data)
 	{
-		return '
+		switch($this->render_html)
+		{
+			case 'js':
+				$html = '
 document.write(\'<table id="'.$data['id'].'"></table>\');
 document.write(\'<div id="'.$data['pager_id'].'"></div>\');
-		';
+';
+			break;
+
+			case 'classic':
+			default:
+				$html = '
+</script>
+<table id="' . $data['id'] . '"></table>
+<div id="' . $data['pager_id'] . '"></div>
+<script>
+';
+			break;
+		}
+
+		return $html;
 	}
 
 	/**
@@ -1095,12 +1130,10 @@ $grid.jqGrid(';
 	// SEARCH OPERATORS PART
 	//----------------
 
-
 	/**
 	 * (Output) Perform searching based on input
 	 * Populates $this->where with SQL-expressions
 	 * 
-	 * @throws jqGrid_Exception
 	 * @return void
 	 */
 	protected function search()
@@ -1143,7 +1176,14 @@ $grid.jqGrid(';
 			if($wh) $this->where[] = $wh;
 		}
 	}
-	
+
+	/**
+	 * (Output) Clean each search value before sending it to other functions
+	 * Returns clean, but UNQUOTED value!!
+	 * 
+	 * @param $val - value
+	 * @return string - clean value
+	 */
 	protected function searchCleanVal($val)
 	{
 		$val = trim($val);
@@ -1157,11 +1197,11 @@ $grid.jqGrid(';
 	}
 
 	/**
-	 * Auto detect of searchOp
+	 * (Output) Auto detect of searchOp
 	 *
-	 * @param  $c column settings
-	 * @param  $val "clean" value. If you need original value - use $this->input
-	 * @return string filering SQL-expression -> goes directly to WHERE. Set false to skip search.
+	 * @param  $c - column settings
+	 * @param  $val - "clean" value. If you need original value - use $this->input
+	 * @return string - SQL-expression -> goes directly to WHERE. Set false to skip search.
 	 */
 	protected function searchOpAuto($c, $val)
 	{
@@ -1188,7 +1228,11 @@ $grid.jqGrid(';
 	}
 
 	/**
-	 * Disable search
+	 * (Output) Disable search
+	 *
+	 * @param $c - column
+	 * @param $val - value
+	 * @return bool
 	 */
 	protected function searchOpIgnore($c, $val)
 	{
@@ -1196,7 +1240,11 @@ $grid.jqGrid(';
 	}
 
 	/**
-	 * Look for EXACT match
+	 * (Output) Look for EXACT match
+	 *
+	 * @param $c - column
+	 * @param $val - value
+	 * @return string
 	 */
 	protected function searchOpEqual($c, $val)
 	{
@@ -1204,7 +1252,11 @@ $grid.jqGrid(';
 	}
 
 	/**
-	 * Look for similar text
+	 * (Output) Look for similar text
+	 *
+	 * @param $c - column
+	 * @param $val - value
+	 * @return string
 	 */
 	protected function searchOpLike($c, $val)
 	{
@@ -1217,7 +1269,11 @@ $grid.jqGrid(';
 	}
 
 	/**
-	 * Look for list of values
+	 * (Output) Look for list of values
+	 *
+	 * @param $c - column
+	 * @param $val - value
+	 * @return string
 	 */
 	protected function searchOpIn($c, $val)
 	{
@@ -1227,8 +1283,12 @@ $grid.jqGrid(';
 	}
 
 	/**
-	 * Look for numeric value
+	 * (Output) Look for numeric value
 	 * Supports prefixes to search for range of numeric values
+	 *
+	 * @param $c - column
+	 * @param $val - value
+	 * @return string
 	 */
 	protected function searchOpNumeric($c, $val)
 	{
@@ -1251,7 +1311,7 @@ $grid.jqGrid(';
 	}
 
 	/**
-	 * Send data to export library
+	 * (Output) Send data to export library
 	 * 
 	 * @param jqGrid_Export $lib
 	 * @return void
@@ -1268,15 +1328,14 @@ $grid.jqGrid(';
 
 		$lib->page     = $this->page;
 		$lib->total    = $this->total;
-		$lib->records  = $this->count;
 	}
 
 	/**
-	 * Set total row count and calc related vars
+	 * (Output) Set total row count and calc related vars
 	 *
 	 * @throws jqGrid_Exception
-	 * @param integer $count - set argument to override auto-detection
-	 * @return
+	 * @param integer $count - set this argument to override auto-detection
+	 * @return void
 	 */
 	protected function setRowCount($count=null)
 	{
@@ -1336,8 +1395,8 @@ $grid.jqGrid(';
 	 * Get input var(s) by key(s)
 	 * Nice shortcut against repeating "isset" everywhere
 	 * 
-	 * @param string|array $key single key or set of keys
-	 * @param mixed $default default value in case the key does not exist
+	 * @param string|array $key - single key or set of keys
+	 * @param mixed $default - default value in case key does not exist
 	 * @return mixed
 	 */
 	protected function input($key, $default=null)

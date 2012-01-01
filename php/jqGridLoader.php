@@ -27,7 +27,10 @@ class jqGridLoader
 		'input_grid'   => 'jqgrid',
 		'input_oper'   => 'oper',
 	);
-	
+
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		#Root_path
@@ -42,8 +45,12 @@ class jqGridLoader
 	}
 
 	/**
-	 * Access grid public methods via this function
-	 * $jq_loader->render('jq_example');
+	 * Access grid public methods
+	 * Like this: $jq_loader->render('jq_example');
+	 *
+	 * @param $func - method name
+	 * @param $arg - arguments
+	 * @return mixed
 	 */
 	public function __call($func, $arg)
 	{
@@ -68,17 +75,36 @@ class jqGridLoader
 			}
 		}
 	}
-	
+
+	/**
+	 * Set setting
+	 * 
+	 * @param $key
+	 * @param $val
+	 * @return void
+	 */
 	public function set($key, $val)
 	{
 		$this->settings[$key] = $val;
 	}
 
+	/**
+	 * Get setting value by key
+	 * 
+	 * @param $key
+	 * @return mixed
+	 */
 	public function get($key)
 	{
 		return isset($this->settings[$key]) ? $this->settings[$key] : null;
 	}
 
+	/**
+	 * Creates new instance of grid class
+	 *
+	 * @param $name - grid class name
+	 * @return object
+	 */
 	public function load($name)
 	{
 		$file = $this->settings['grid_path'] . $name . '.php';
@@ -92,6 +118,10 @@ class jqGridLoader
 		return new $name($this);
 	}
 
+	/**
+	 * Loads specific DB class
+	 * @return object
+	 */
 	public function loadDB()
 	{
 		$class = 'jqGrid_DB_' . ucfirst($this->settings['db_driver']);
@@ -100,7 +130,10 @@ class jqGridLoader
 	}
 
 	/**
-	 * Sample controller function
+	 * Basic controller-like function
+	 * Fell free to replace it with your own code
+	 * 
+	 * @return void
 	 */
 	public function autorun()
 	{
@@ -122,8 +155,10 @@ class jqGridLoader
 	}
 
 	/**
-	 * jqGridPHP autoloader
+	 * jqGridPHP Autoloader
 	 * It will process only class names starting with 'jqGrid_'
+	 * @param $class - class name
+	 * @return void
 	 */
 	protected function autoload($class)
 	{
