@@ -28,6 +28,8 @@ class jqGridLoader
 		'input_oper'   => 'oper',
 	);
 
+	protected $init_query = array();
+
 	/**
 	 * Constructor
 	 */
@@ -125,8 +127,35 @@ class jqGridLoader
 	public function loadDB()
 	{
 		$class = 'jqGrid_DB_' . ucfirst($this->settings['db_driver']);
-		
-		return new $class($this);
+		$lib = new $class($this);
+
+		foreach($this->init_query as $q)
+		{
+			$lib->query($q);
+		}
+
+		return $lib;
+	}
+
+	/**
+	 * Add query to be executed right after database connection
+	 *
+	 * @param $query
+	 * @return void
+	 */
+	public function addInitQuery($query)
+	{
+		$this->init_query[] = strval($query);
+	}
+
+	/**
+	 * Reset init queries - in case you have to work with multiple connections
+	 * 
+	 * @return void
+	 */
+	public function resetInitQuery()
+	{
+		$this->init_query = array();
 	}
 
 	/**
