@@ -409,12 +409,12 @@ $.jgrid.extend(
 		};
 	},
 	
-	'updateGroupHeader' : function()
+	'updateGroupHeaderWR' : function()
 	{
 		return this.each(function()
 		{
 			var $t = this;
-			if(!$t.grid || !$t.p.groupHeader) return;
+			if(!$t.grid || !$t.p.groupHeaderWR) return;
 			
 			var $hDiv   = $($t.grid.hDiv);
 			var $labels = $hDiv.find('.ui-jqgrid-labels');
@@ -450,7 +450,7 @@ $.jgrid.extend(
 				else
 				{
 					var $th = $(th).attr('colspan', colspan);
-					if($t.p.groupHeader[prev_hgroup]) $th.text($t.p.groupHeader[prev_hgroup].label);
+					if($t.p.groupHeaderWR[prev_hgroup]) $th.text($t.p.groupHeaderWR[prev_hgroup].label);
 					$th.appendTo($group_row);
 					
 					prev_hgroup = hgroup;
@@ -462,7 +462,7 @@ $.jgrid.extend(
 			if(colspan)
 			{
 				var $th = $(th).attr('colspan', colspan);
-				if($t.p.groupHeader[prev_hgroup]) $th.text($t.p.groupHeader[prev_hgroup].label);
+				if($t.p.groupHeaderWR[prev_hgroup]) $th.text($t.p.groupHeaderWR[prev_hgroup].label);
 				$th.appendTo($group_row);
 			}
 			
@@ -485,7 +485,7 @@ $.jgrid.extend(
 		});
 	},
 	
-	'destroyGroupHeader' : function()
+	'destroyGroupHeaderWR' : function()
 	{
 		return this.each(function()
 		{

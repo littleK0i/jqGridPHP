@@ -2,7 +2,7 @@
 
 var options = 
 {
-	'groupHeader' : 
+	'groupHeaderWR' : 
 	{
 		'book'     : {'label' : 'Book'},
 		'order'    : {'label' : 'Order'},
@@ -12,12 +12,12 @@ var options =
 };
 
 <?=$jq_loader->render('jqMiscGroupHeaderEx', 'options');?>
-$grid.jqGrid('updateGroupHeader');
+$grid.jqGrid('updateGroupHeaderWR');
 
 //sortable
 $('.ui-sortable').bind('sortstop', function()
 {
-	$grid.jqGrid('updateGroupHeader');
+	$grid.jqGrid('updateGroupHeaderWR');
 });
 
 $grid.navButtonAdd(pager, { caption:"Column chooser", buttonicon:"ui-icon-newwin", onClickButton: function()
@@ -25,7 +25,7 @@ $grid.navButtonAdd(pager, { caption:"Column chooser", buttonicon:"ui-icon-newwin
 	$grid.jqGrid('columnChooser', {'done' : function(perm)
 	{
 		//this.jqGrid("remapColumns", perm, true);
-		this.jqGrid('updateGroupHeader');
+		this.jqGrid('updateGroupHeaderWR');
 	}});
 }}); 
 </script>
