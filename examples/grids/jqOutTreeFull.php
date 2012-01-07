@@ -57,9 +57,9 @@ class jqOutTreeFull extends jqGrid
 		
 		#Add current node
 		$orig_row['level'] = $level;
-		$orig_row['parent'] = $parent;
+		$orig_row['parent'] = $parent ? $parent : null;
 		$orig_row['isLeaf'] = $this->DB->rowCount($result) ? false : true;
-		$orig_row['expanded'] = false;
+		$orig_row['expanded'] = $this->input('expanded') ? true : false;
 		
 		parent::addRow($orig_row);
 		
@@ -68,5 +68,11 @@ class jqOutTreeFull extends jqGrid
 		{
 			$this->addRow($r, $orig_row['id'], $level + 1);
 		}
+	}
+	
+	protected function renderPostData()
+	{
+		$p['expanded'] = $this->input('expanded') ? 1 : 0;
+		return $p;
 	}
 }

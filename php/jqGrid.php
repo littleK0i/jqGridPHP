@@ -463,6 +463,7 @@ abstract class jqGrid
 			$cell[] = $row['parent'];
 			$cell[] = $row['isLeaf'];
 			$cell[] = $row['expanded'];
+			$cell[] = isset($row['loaded']) ? $row['loaded'] : true; //loaded
 		}
 
 		//----------------
