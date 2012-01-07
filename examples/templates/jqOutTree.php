@@ -3,11 +3,12 @@
 var opts = {
 	'treeGrid'      : true,
 	'treeGridModel' : 'adjacency',
-	'ExpandColumn'  : 'node_name'
+	'ExpandColumn'  : 'node_name',
+	
+	'viewrecords'   : false
 };
 
 <?=$jq_loader->render('jqOutTree', 'opts');?>
-$grid.filterToolbar();
 
 </script>
 

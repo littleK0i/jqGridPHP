@@ -2,6 +2,8 @@
 
 class jqOutTree extends jqGrid
 {
+	protected $do_count = false;
+	
 	protected function init()
 	{
 		#Set tree grid mode
@@ -17,7 +19,6 @@ class jqOutTree extends jqGrid
 			SELECT {fields}
 			FROM tbl_tree t
 			WHERE {where} AND t.parent_id='{$this->parent_id}'
-			ORDER BY t.id
 		";
 
 		#Set columns
