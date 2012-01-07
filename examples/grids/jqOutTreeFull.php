@@ -60,6 +60,7 @@ class jqOutTreeFull extends jqGrid
 		$orig_row['parent'] = $parent ? $parent : null;
 		$orig_row['isLeaf'] = $this->DB->rowCount($result) ? false : true;
 		$orig_row['expanded'] = $this->input('expanded') ? true : false;
+		$orig_row['loaded'] = true;
 		
 		parent::addRow($orig_row);
 		
