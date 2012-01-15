@@ -1377,7 +1377,9 @@ $grid.jqGrid(';
 		// Implode rules
 		//------------
 
-		return '(' . implode(' ' . $row['groupOp'] . ' ', array_filter($wh)) . ')';
+		$wh = array_filter($wh);
+
+		return $wh ? ('(' . implode(' ' . $row['groupOp'] . ' ', array_filter($wh)) . ')') : 'true';
 	}
 
 	/**
