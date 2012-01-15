@@ -1381,7 +1381,7 @@ $grid.jqGrid(';
 
 		$wh = array_filter($wh);
 
-		return $wh ? ('(' . implode(' ' . $row['groupOp'] . ' ', array_filter($wh)) . ')') : 'true';
+		return $wh ? ('(' . implode(' ' . $row['groupOp'] . ' ', array_filter($wh)) . ')') : $this->where_empty;
 	}
 
 	/**
