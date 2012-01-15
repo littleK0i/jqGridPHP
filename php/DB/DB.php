@@ -5,17 +5,64 @@ abstract class jqGrid_DB
 	protected $loader;
 	protected $db_type;
 
+	/**
+	 * Establish connection to database
+	 *
+	 * @abstract
+	 * @return void
+	 */
 	abstract public function link();
+
+	/**
+	 * Execute SQL-query
+	 *
+	 * @abstract
+	 * @param $query
+	 * @return resource
+	 */
 	abstract public function query($query);
+
+	/**
+	 * Fetch-assoc one row
+	 *
+	 * @abstract
+	 * @param resource $result
+	 * @return array
+	 */
 	abstract public function fetch($result);
+
+	/**
+	 * Like PDO::quote
+	 * @abstract
+	 * @param mixed $value
+	 * @return string
+	 */
 	abstract public function quote($value);
+
+	/**
+	 * Like PDO::rowCount and *_affected_rows
+	 * @abstract
+	 * @param resource $result
+	 * @return integer
+	 */
 	abstract public function rowCount($result);
 
+	/**
+	 * @param jqGridLoader $loader
+	 */
 	public function __construct(jqGridLoader $loader)
 	{
 		$this->loader = $loader;
 	}
 
+	/**
+	 * INSERT query wrapper
+	 *
+	 * @param string $tblName - table name
+	 * @param array $ins - key => value pairs
+	 * @param bool $last_insert_id - if true - returns last insert id
+	 * @return mixed
+	 */
 	public function insert($tblName, array $ins, $last_insert_id=false)
 	{
 		$tblName = jqGrid_Utils::checkAlphanum($tblName);
@@ -52,6 +99,16 @@ abstract class jqGrid_DB
 		return $result;
 	}
 
+	/**
+	 * UPDATE query wrapper
+	 * Be careful with string $cond - it is not clean!
+	 *
+	 * @param string $tblName - table name
+	 * @param array $upd - key => value pairs
+	 * @param mixed $cond - key => value pairs, integer (for id=) or string
+	 * @param bool $row_count - if true - return row count (affected_rows)
+	 * @return mixed
+	 */
 	public function update($tblName, array $upd, $cond, $row_count=false)
 	{
 		$tblName = jqGrid_Utils::checkAlphanum($tblName);
@@ -101,6 +158,13 @@ abstract class jqGrid_DB
 		return $result;
 	}
 
+	/**
+	 * DELETE query wrapper
+	 *
+	 * @param string $tblName - table name
+	 * @param mixed $cond - key => value pairs, integer (for id=) or string
+	 * @return resource
+	 */
 	public function delete($tblName, $cond)
 	{
 		$tblName = jqGrid_Utils::checkAlphanum($tblName);
@@ -134,17 +198,44 @@ abstract class jqGrid_DB
 
 		return $result;
 	}
-	
+
+	/**
+	 * Get database-spcific lastInsertId
+	 * Overload it!
+	 *
+	 * @return integer
+	 */
 	public function lastInsertId()
 	{
 		return null;
 	}
 
+	/**
+	 * Get database type
+	 * @return string
+	 */
 	public function getType()
 	{
 		return $this->db_type;
 	}
 
+	/**
+	 * Shortcut for creating new 'jqGrid_Data_Raw' object
+	 *
+	 * @param string $val
+	 * @return jqGrid_Data_Raw
+	 */
+	public function raw($val)
+	{
+		return new jqGrid_Data_Raw($val);
+	}
+
+	/**
+	 * Clean array keys and values for later use in SQL
+	 *
+	 * @param array $arr
+	 * @return array
+	 */
 	protected function cleanArray(array $arr)
 	{
 		$clean = array();

@@ -33,12 +33,13 @@ abstract class jqGrid
 	
 	protected $do_agg = true;
 	protected $do_search = true;
+	protected $do_search_advanced = true;
 	protected $do_sort = true;
 	protected $do_limit = true;
 
 	protected $render_html = 'classic'; //replace with 'js' to get back to 'document.write'
 	
-	protected $treegrid = false; //'adjacency'!, 'nested' is not supported
+	protected $treegrid = false; //'adjacency' or 'nested' is not supported
 
 	protected $options = array();
 	protected $nav   = array();
@@ -84,10 +85,12 @@ abstract class jqGrid
 		),
 
 		'options' => array(),
+
+		'reserved_col_names' => array('page', 'sidx', 'sord', 'nd', 'oper', 'filters'),
 	);
 
-	protected $reserved_col_names = array('page', 'sidx', 'sord', 'nd', 'parent', 'nlevel', 'expanded', 'isLeaf', 'oper');
-	protected $internals = array('db', 'db_agg', 'unset', 'manual', 'search_op');
+	protected $reserved_col_names;
+	protected $internal_col_prop = array('db', 'db_agg', 'unset', 'manual', 'search_op');
 	protected $query_placeholders = array('fields' => '{fields}', 'where' => '{where}');
 
 	/**
@@ -106,6 +109,8 @@ abstract class jqGrid
 		$this->loader	= $loader;
 		$this->input	= $this->getInput();
 		$this->DB		= $loader->loadDB();
+
+		$this->reserved_col_names = $this->getReservedColNames();
 
 		//----------------
 		// Init
@@ -157,6 +162,11 @@ abstract class jqGrid
 		if($this->do_search)
 		{
 			$this->search();
+		}
+
+		if($this->do_search_advanced)
+		{
+			$this->searchAdvanced();
 		}
 
 		//----------------
@@ -306,7 +316,7 @@ abstract class jqGrid
 			if(isset($c['unset']) and $c['unset']) continue;
 
 			#Remove internal column properties
-			$c = array_diff_key($c, array_flip($this->internals));
+			$c = array_diff_key($c, array_flip($this->internal_col_prop));
 			
 			$colModel[] = $this->renderColumn($c);
 		}
@@ -377,6 +387,13 @@ abstract class jqGrid
 				if($this->loader->get('debug_output'))
 				{
 					$r['error_string'] = (string)$e;
+				}
+				else
+				{
+					if($e instanceof jqGrid_Exception_DB)
+					{
+						unset($r['error_data']['query']);
+					}
 				}
 
 				$this->json($r);
@@ -463,7 +480,17 @@ abstract class jqGrid
 			$cell[] = $row['parent'];
 			$cell[] = $row['isLeaf'];
 			$cell[] = $row['expanded'];
-			$cell[] = isset($row['loaded']) ? $row['loaded'] : false; //loaded
+			$cell[] = isset($row['loaded']) ? $row['loaded'] : false;
+		}
+
+		if($this->treegrid == 'nested')
+		{
+			$cell[] = $row['level'];
+			$cell[] = $row['lft'];
+			$cell[] = $row['rgt'];
+			$cell[] = $row['isLeaf'];
+			$cell[] = $row['expanded'];
+			$cell[] = isset($row['loaded']) ? $row['loaded'] : false;
 		}
 
 		//----------------
@@ -765,6 +792,28 @@ abstract class jqGrid
 		}
 
 		return $req;
+	}
+
+	/**
+	 * Get reserved column names specific to this grid
+	 *
+	 * @return array - array of names
+	 */
+	protected function getReservedColNames()
+	{
+		$names = $this->default['reserved_col_names'];
+
+		if($this->treegrid == 'adjacency')
+		{
+			$names = array_merge($names, array('parent', 'level', 'isLeaf', 'expanded', 'loaded'));
+		}
+
+		if($this->treegrid == 'nested')
+		{
+			$names = array_merge($names, array('level', 'lft', 'rgt', 'isLeaf', 'expanded', 'loaded'));
+		}
+
+		return $names;
 	}
 
 	/**
@@ -1176,6 +1225,159 @@ $grid.jqGrid(';
 			$wh = call_user_func($callback, $c, $val);
 			if($wh) $this->where[] = $wh;
 		}
+	}
+
+	/**
+	 * (Output) Perform searching based on input json-encoded variable 'filters'
+	 * Populates $this->where with SQL-expressions
+	 *
+	 * @return void
+	 */
+	protected function searchAdvanced()
+	{
+		$filters = $this->input('filters');
+
+		if(empty($filters))
+		{
+			return;
+		}
+
+		$filters = json_decode($filters, true);
+
+		if(empty($filters))
+		{
+			return;
+		}
+
+		$this->where[] = $this->searchAdvancedGroup($filters);
+	}
+
+	/**
+	 * (Output) Recursive processor for each search group
+	 *
+	 * @param $row
+	 * @return string
+	 */
+	protected function searchAdvancedGroup($row)
+	{
+		static $base = array(
+			'groupOp' => 'AND',
+			'rules' => array(),
+			'groups' => array(),
+		);
+
+		static $basic_ops = array(
+			'eq' => '=',
+			'ne' => '!=',
+			'lt' => '<',
+			'le' => '<=',
+			'gt' => '>',
+			'ge' => '>=',
+		);
+
+		static $like_ops = array(
+			'bw' => "LIKE '{data}%'",
+			'bn' => "NOT LIKE '{data}%'",
+			'ew' => "LIKE '%{data}'",
+			'en' => "NOT LIKE '%{data}'",
+			'cn' => "LIKE '%{data}%'",
+			'nc' => "NOT LIKE '%{data}%'",
+		);
+
+		$row = array_merge($base, $row);
+		$wh  = array();
+
+		//------------
+		// Process rules
+		//------------
+
+		foreach($row['rules'] as $r)
+		{
+			if(!array_key_exists($r['field'], $this->cols))
+			{
+				continue;
+			}
+
+			$op   = $r['op'];
+			$c    = $this->cols[$r['field']];
+			$data = $this->searchCleanVal($r['data']);
+
+			//-------------
+			// Empty data? Skip this rule!
+			//-------------
+
+			if(empty($data) and !in_array($op, array('nu', 'nn')))
+			{
+				continue;
+			}
+
+			//-------------
+			// Customer search op
+			//-------------
+
+			if($c['search_op'] and $c['search_op'] != 'auto')
+			{
+				$callback = array($this, jqGrid_Utils::uscore2camel('searchOp', $c['search_op']));
+
+				if(!is_callable($callback))
+				{
+					throw new jqGrid_Exception('Search operation ' . $c['search_op'] . ' is not defined');
+				}
+
+				$wh[] = call_user_func($callback, $c, $data);
+
+				continue;
+			}
+
+			//-------------
+			// Common search op's
+			//-------------
+
+			if(array_key_exists($op, $basic_ops))
+			{
+				$wh[] = $c['db'] . ' ' . $basic_ops[$op] . " '$data'";
+			}
+			elseif(array_key_exists($op, $like_ops))
+			{
+				$wh[] = $c['db'] . ' ' . str_replace('{data}', addcslashes($data, '%_'), $like_ops[$op]);
+			}
+			else
+			{
+				switch($op)
+				{
+					case 'nu':
+						$wh[] = $c['db'] . ' IS NULL';
+					break;
+
+					case 'nn':
+						$wh[] = $c['db'] . ' IS NOT NULL';
+					break;
+
+					case 'in':
+						$wh[] = $c['db'] . " IN ('" . implode("','", array_map('trim', explode(',', $data))) . "')";
+					break;
+
+					case 'ni':
+						$wh[] = $c['db'] . " NOT IN ('" . implode("','", array_map('trim', explode(',', $data))) . "')";
+					break;
+				}
+			}
+		}
+
+		//------------
+		// Process sub-groups recursively
+		//------------
+
+		foreach($row['groups'] as $g)
+		{
+			$wh[] = $this->searchAdvancedGroup($g);
+		}
+
+		//------------
+		// Implode rules
+		//------------
+
+		return '(' . implode(' ' . $row['groupOp'] . ' ', array_filter($wh)) . ')';
 	}
 
 	/**

@@ -41,7 +41,7 @@ class jqGrid_DB_Mysql extends jqGrid_DB
 
 		if(!$result)
 		{
-			$this->throwMysqlException();
+			$this->throwMysqlException($query);
 		}
 
 		return $result;
@@ -72,8 +72,8 @@ class jqGrid_DB_Mysql extends jqGrid_DB
 		return mysql_insert_id($this->link);
 	}
 
-	protected function throwMysqlException()
+	protected function throwMysqlException($query = null)
 	{
-		throw new jqGrid_Exception_DB(mysql_error(), null, mysql_errno());
+		throw new jqGrid_Exception_DB(mysql_error(), array('query' => $query), mysql_errno());
 	}
 }

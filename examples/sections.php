@@ -17,6 +17,7 @@ $_SECTIONS = array(
 						 'outComplex'=> array('en' => 'Complex queries', 'ru' => 'Сложные SQL-запросы'),
 						 'outTree'	 => array('en' => 'Tree grid', 'ru' => 'Вывод дерева по уровням'),
 						 'outTreeFull' => array('en' => 'Tree grid (Full)', 'ru' => 'Вывод дерева сразу целиком'),
+						 'outAdvancedSearch' => array('en' => 'Advanced Search', 'ru' => 'Продвинутый поиск'),
 						),
 	),
 

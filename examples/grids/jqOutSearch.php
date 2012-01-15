@@ -77,9 +77,6 @@ class jqOutSearch extends jqGrid
 									'search_op' => 'auto', //auto recognize search type (default)
 									),
 		);
-
-		#Set nav
-		$this->nav = array('edit' => true, 'edittext' => 'Edit');
 	}
 
 	#Custom search operation

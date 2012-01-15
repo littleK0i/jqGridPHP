@@ -8,8 +8,11 @@ class jqGrid_Utils
 	 *
 	 * Based on original 'php2js' function of Dmitry Koterov
 	 *
+	 * @static
+	 * @param  mixed $a
+	 * @return string
 	 */
-	public static function jsonEncode( $a = false, $newlines = false )
+	public static function jsonEncode( $a = false )
 	{
 		static $jsonReplaces = array(
 			array("\\", "/", "\n", "\t", "\r", "\b", "\f", '"'),
@@ -69,11 +72,21 @@ class jqGrid_Utils
 		}
 	}
 
-	public static function checkAlphanum($val)
+	/**
+	 * Check input string to contain only english letters, numbers and unserscore
+	 * The list of allowed characters might be extended
+	 *
+	 * @static
+	 * @throws jqGrid_Exception
+	 * @param $val - input string
+	 * @param string $additional - additional allowed characters
+	 * @return string
+	 */
+	public static function checkAlphanum($val, $additional='')
 	{
 		static $mask = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
 
-		if( $val and strspn($val, $mask) != strlen($val) )
+		if( $val and strspn($val, $mask . $additional) != strlen($val) )
 		{
 			throw new jqGrid_Exception('Alphanum check failed on value: ' . $val);
 		}
@@ -82,7 +95,13 @@ class jqGrid_Utils
 	}
 
 	/**
-	 * Convert 'under_score' to 'underScore'
+	 * Convert undescore to camel-case
+	 * Used to build function names
+	 *
+	 * @static
+	 * @param $prefix
+	 * @param $name
+	 * @return string
 	 */
 	public static function uscore2camel($prefix, $name)
 	{
@@ -96,6 +115,12 @@ class jqGrid_Utils
 	/**
 	 * Callback for array_walk
 	 * PHP 5.2 does not support closures, so..
+	 *
+	 * @static
+	 * @param $arr
+	 * @param $enc_from
+	 * @param $enc_to
+	 * @return array
 	 */
 	public static function arrayIconv($arr, $enc_from, $enc_to)
 	{

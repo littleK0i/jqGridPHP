@@ -32,7 +32,7 @@ class jqGrid_DB_Pgsql extends jqGrid_DB
 
 		if(!$result)
 		{
-			throw new jqGrid_Exception_DB(pg_last_error());
+			throw new jqGrid_Exception_DB(pg_last_error(), array('query' => $query));
 		}
 
 		return $result;

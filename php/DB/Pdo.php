@@ -45,7 +45,7 @@ class jqGrid_DB_Pdo extends jqGrid_DB
 		}
 		catch(PDOException $e)
 		{
-			throw new jqGrid_Exception_DB($e->getMessage(), null, $e->getCode());
+			throw new jqGrid_Exception_DB($e->getMessage(), array('query' => $sql), $e->getCode());
 		}
 	}
 
