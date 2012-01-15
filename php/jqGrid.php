@@ -1285,6 +1285,8 @@ $grid.jqGrid(';
 		);
 
 		$row = array_merge($base, $row);
+		$row['groupOp'] = in_array($row['groupOp'], array('AND', 'OR')) ? $row['groupOp'] : 'AND';
+
 		$wh  = array();
 
 		//------------

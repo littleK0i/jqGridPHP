@@ -1,4 +1,28 @@
 <script>
+var template1 = {
+	'groupOp' : 'AND',
+	'rules'   : [
+		{'field': 'id', 'op' : 'ge', 'data' : 500},
+		{'field': 'customer_name', 'op': 'bw', 'data' : 'Joh'},
+		{'field': 'delivery_type', 'op': 'eq', 'data' : '1'}
+	]
+};
+
+var template2 = {
+	'groupOp' : 'AND',
+	'rules'   : [
+		{'field': 'price', 'op' : 'lt', 'data': '1500'}
+	],
+	'groups'  : [
+		{
+			'groupOp': 'OR',
+			'rules'  : [
+				{'field': 'customer_name', 'op': 'cn', 'data' : 'Clyde'},
+				{'field': 'customer_name', 'op': 'cn', 'data' : 'Ernest'}
+			]
+		}
+	]
+};
 
 <?=$jq_loader->render('jqOutAdvancedSearch');?>
 

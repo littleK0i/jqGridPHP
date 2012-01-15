@@ -81,7 +81,12 @@ class jqOutAdvancedSearch extends jqGrid
 		$this->nav = array(
 			'search' => true,
 			'searchtext' => 'Search',
-			'prmSearch' => array('multipleSearch' => true, 'multipleGroup' => true)
+			'prmSearch' => array(
+				'multipleSearch' => true,
+				'multipleGroup' => true,
+				'tmplNames' => array('Test template 1', 'Test template 2'),
+				'tmplFilters' => array(new jqGrid_Data_Raw('template1'), new jqGrid_Data_Raw('template2')),
+			),
 		);
 	}
 
