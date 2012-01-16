@@ -39,7 +39,7 @@ abstract class jqGrid
 
 	protected $render_html = 'classic'; //replace with 'js' to get back to 'document.write'
 	
-	protected $treegrid = false; //'adjacency' or 'nested' is not supported
+	protected $treegrid = false; //'adjacency' or 'nested'
 
 	protected $options = array();
 	protected $nav   = array();
