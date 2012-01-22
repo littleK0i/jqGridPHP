@@ -335,8 +335,11 @@ $.jgrid.extend(
 				$grid.jqGrid('extLoading', false);
 			});
 			
+			if(!$.browser.msie)
+			{
+				$grid.jqGrid('extLoading', true);
+			}
 			
-			$grid.jqGrid('extLoading', true);
 			$('html').append($frame);
 		});
 	},
