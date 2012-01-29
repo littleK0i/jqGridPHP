@@ -234,7 +234,7 @@ abstract class jqGrid
 			$id = $this->input('id');
 		}
 
-		switch($oper)
+		switch(strval($oper))
 		{
 			case 'add':
 			case 'edit':
@@ -875,6 +875,11 @@ abstract class jqGrid
 	 */
 	protected function opAdd($ins)
 	{
+		if(empty($this->table))
+		{
+			throw new jqGrid_Exception('Table is not defined');
+		}
+	
 		return $this->DB->insert($this->table, $ins, true);
 	}
 
@@ -887,6 +892,11 @@ abstract class jqGrid
 	 */
 	protected function opEdit($id, $upd)
 	{
+		if(empty($this->table))
+		{
+			throw new jqGrid_Exception('Table is not defined');
+		}
+	
 		$this->DB->update($this->table, $upd, array($this->primary_key => $id));
 	}
 
@@ -898,6 +908,11 @@ abstract class jqGrid
 	 */
 	protected function opDel($id)
 	{
+		if(empty($this->table))
+		{
+			throw new jqGrid_Exception('Table is not defined');
+		}
+	
 		#Delete single value
 		if(is_numeric($id))
 		{
