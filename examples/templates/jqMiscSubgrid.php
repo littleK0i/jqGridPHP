@@ -1,4 +1,6 @@
 <script>
+lastsel = null;
+
 var opts = {
 	subGrid: true,
 	subGridRowExpanded: function(subgrid_id, row_id) 
@@ -12,6 +14,16 @@ var opts = {
 			dataType: 'script',
 			data: {'oper' : 'renderSubgrid', 'row_id' : row_id}
 		});
+	},
+	
+	onSelectRow: function(id)
+	{
+        if(id && id!==lastsel)
+		{
+            $(this).jqGrid('restoreRow',lastsel);
+            $(this).jqGrid('editRow',id,true);
+            lastsel=id;
+        }
 	}
 };
 

@@ -106,4 +106,26 @@ class jqOutSearch extends jqGrid
 
 		return $rows;
 	}
+	
+	protected function renderPostData()
+	{
+		$data = array();
+		
+		foreach(array_intersect_key($this->input, $this->cols) as $k => $v)
+		{
+			$data[$k] = $v;
+		}
+		
+		return $data;
+	}
+	
+	protected function renderColumn($c)
+	{
+		if($this->input($c['name']))
+		{
+			$c['searchoptions']['defaultValue'] = $this->input($c['name']);
+		}
+		
+		return $c;
+	}
 }
