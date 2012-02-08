@@ -22,7 +22,7 @@ $.jgrid.ext =
 {
 	errorHandler : function(obj)
 	{
-		if(obj.error)
+		if(obj && obj.error)
 		{
 			$.jgrid.info_dialog($.jgrid.errors.errcap,obj.error_msg,$.jgrid.edit.bClose);
 		}
