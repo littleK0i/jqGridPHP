@@ -97,14 +97,14 @@
 
 <body>
 	<?php if(isset($_REQUEST['iframe'])) : ?>
-	<?php require 'templates/' . $grid . '.php'; ?>
+	<?php require 'templates' . DS . $grid . '.php'; ?>
 	<?php else : ?>
 	<table>
 	<tr>
-		<td width="260px" valign="top"><?php require 'templates/_accordion.php'; ?></td>
+		<td width="260px" valign="top"><?php require 'templates' . DS . '_accordion.php'; ?></td>
 		<td valign="top" style="padding-left: 10px;">
-			<?php require 'templates/' . $grid . '.php'; ?>
-			<?php require 'templates/_sources.php'; ?>
+			<?php require 'templates' . DS . $grid . '.php'; ?>
+			<?php require 'templates' . DS . '_sources.php'; ?>
 		</td>
 	</tr>
 	</table>

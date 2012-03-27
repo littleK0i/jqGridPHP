@@ -115,16 +115,7 @@ class jqWelcome extends jqGrid
 		}
 		
 		#Phone has letters?
-		if($r['phone'] and preg_match('#[^0-9]#', $r['phone']))
-		{
-			$r['phone'] = preg_replace('#\D#', '', $r['phone']);
-			
-			if(strlen($r['phone']) != 11)
-			{
-				throw new jqGrid_Exception('Phone must contain 11 digits');
-			}
-		}
-		
+		$r['phone'] = preg_replace('#\D#', '', $r['phone']);
 		$r['discount'] = 0;
 		
 		return $r;

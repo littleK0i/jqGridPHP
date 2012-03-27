@@ -69,7 +69,7 @@ class jqGrid_DB_Mysql extends jqGrid_DB
 	
 	public function lastInsertId()
 	{
-		return mysql_insert_id($this->link);
+		return mysql_insert_id($this->link());
 	}
 
 	protected function throwMysqlException($query = null)
