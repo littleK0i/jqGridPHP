@@ -29,25 +29,25 @@ $.jgrid.ext =
 	},
 	ajaxFormProxy: function(opts, act)
 	{
-		//get url
 		opts.url = $(this).getGridParam('url');
-		
-		//use normal ajax-call for del
-		if(act.substring(0, 4) == 'del_')
-		{
-			$.ajax(opts);
-		}
-		
-		//force iframe
 		opts.iframe = true;
 		
 		var $form = $('#FrmGrid_' + $(this).getGridParam('id'));
-		var ele = $form.find('INPUT,TEXTAREA').not(':file');
 		
+		//use normal ajax-call when no files to upload
+		if($form.find(':file[value!=""]').size() == 0)
+		{
+			$.ajax(opts);
+			return;
+		}
+
 		//Prevent non-file inputs double serialization
+		var ele = $form.find(':input').not(':file');
+		
 		ele.each(function()
 		{
-			$(this).data('name', $(this).attr('name')).removeAttr('name');
+			$(this).data('name', $(this).attr('name'));
+			$(this).removeAttr('name');
 		});
 		
 		//Send only previously generated data + files

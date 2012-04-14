@@ -85,22 +85,25 @@ class jqOperUpload extends jqGrid
 	#Init file processing
 	protected function operData($r)
 	{
-		require_once 'misc/upload.class.php';
-
-		$this->upload = new upload($_FILES['upload']);
-
-		if(!$this->upload->uploaded)
+		if(isset($_FILES['upload']))
 		{
-			throw new jqGrid_Exception('Upload failed');
-		}
+			require_once 'misc/upload.class.php';
 
-		if(!in_array($this->upload->file_src_name_ext, $this->file_ext))
-		{
-			throw new jqGrid_Exception('Bad file type');
-		}
+			$this->upload = new upload($_FILES['upload']);
 
-		$r['filename'] = $this->upload->file_src_name;
-		$r['size']     = $this->upload->file_src_size;
+			if(!$this->upload->uploaded)
+			{
+				throw new jqGrid_Exception('Upload failed');
+			}
+
+			if(!in_array($this->upload->file_src_name_ext, $this->file_ext))
+			{
+				throw new jqGrid_Exception('Bad file type');
+			}
+
+			$r['filename'] = $this->upload->file_src_name;
+			$r['size']     = $this->upload->file_src_size;
+		}
 
 		return $r;
 	}
@@ -115,16 +118,19 @@ class jqOperUpload extends jqGrid
 	#Upload
 	protected function operAfterAddEdit($id)
 	{
-		ini_set('memory_limit', '128M');
-		
-		$this->upload->file_new_name_body   = $id;
-		$this->upload->file_auto_rename     = false;
-		$this->upload->file_overwrite       = true;
-		$this->upload->image_resize         = true;
-		$this->upload->image_x              = 75;
-		$this->upload->image_y        		= 75;
-		$this->upload->image_ratio_crop		= true;
+		if(isset($_FILES['upload']))
+		{
+			ini_set('memory_limit', '128M');
+			
+			$this->upload->file_new_name_body   = $id;
+			$this->upload->file_auto_rename     = false;
+			$this->upload->file_overwrite       = true;
+			$this->upload->image_resize         = true;
+			$this->upload->image_x              = 75;
+			$this->upload->image_y        		= 75;
+			$this->upload->image_ratio_crop		= true;
 
-		$this->upload->process($this->img_path);
+			$this->upload->process($this->img_path);
+		}
 	}
 }
