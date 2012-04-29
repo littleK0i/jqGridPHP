@@ -203,7 +203,10 @@ abstract class jqGrid
 		// Set count automatically
 		//----------------
 
-		$this->setRowCount();
+		if(is_null($this->count))
+		{
+			$this->setRowCount();
+		}
 
 		//----------------
 		// Do output
