@@ -1,6 +1,8 @@
+<?php $rendered_grid = $jq_loader->render('jqGeneral'); ?>
+
 <script>
 
-<?=$jq_loader->render('jqGeneral');?>
+<?= $rendered_grid ?>
 $grid.filterToolbar();
 
 $grid.jqGrid('navButtonAdd', pager, 
@@ -16,25 +18,6 @@ $grid.jqGrid('navButtonAdd', pager,
 		});
 	}
 });
-
-/*
-$grid.jqGrid('navButtonAdd', pager, 
-{
-	'caption'      : 'Restore Data', 
-	'buttonicon'   : 'ui-icon-home', 
-	'onClickButton': function()
-	{
-		$(this).jqGrid('extRequest',
-		{
-			'oper' : 'generateData', 
-			'foo'  : 'bar'
-		}, function(ret)
-		{
-			alert(ret);
-		}, true);
-	}
-});
-*/
 
 </script>
 	

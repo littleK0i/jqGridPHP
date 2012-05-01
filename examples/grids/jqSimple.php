@@ -49,5 +49,8 @@ class jqSimple extends jqGrid
 
 		#Set nav
 		$this->nav = array('add' => true, 'edit' => true, 'del' => true);
+
+		#Add filter toolbar
+		$this->render_filter_toolbar = true;
 	}
 }

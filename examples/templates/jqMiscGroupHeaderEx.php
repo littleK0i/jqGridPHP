@@ -1,6 +1,8 @@
+<?php $rendered_grid = $jq_loader->render('jqMiscGroupHeaderEx'); ?>
+
 <script>
 
-var options = 
+var opts =
 {
 	'groupHeaderWR' : 
 	{
@@ -11,7 +13,7 @@ var options =
 	'sortable'	  : true
 };
 
-<?=$jq_loader->render('jqMiscGroupHeaderEx', 'options');?>
+<?= $rendered_grid ?>
 $grid.jqGrid('updateGroupHeaderWR');
 
 //sortable

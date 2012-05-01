@@ -1,3 +1,5 @@
+<?php $rendered_grid = $jq_loader->render('jqOperUpload'); ?>
+
 <style>
 .ui-jqgrid TR.jqgrow IMG
 {
@@ -13,7 +15,7 @@ var opts =
 	'dataProxy' : $.jgrid.ext.ajaxFormProxy //our charming dataProxy ^__^
 }
 
-<?=$jq_loader->render('jqOperUpload', 'opts');?>
+<?= $rendered_grid ?>
 $grid.filterToolbar();
 
 </script>

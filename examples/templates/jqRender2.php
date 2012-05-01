@@ -1,5 +1,7 @@
+<?php $rendered_grid = $jq_loader->render('jqRender2'); ?>
+
 <script>
-<?=$jq_loader->render('jqRender2');?>
+<?= $rendered_grid ?>
 
 </script>
 	

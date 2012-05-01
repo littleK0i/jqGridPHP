@@ -4,6 +4,11 @@ class jqCols extends jqGrid
 {
 	protected function init()
 	{
+		$this->options = array(
+			'sortname'  => 'book_id',
+			'sortorder' => 'asc',
+		);
+
 		$this->query = "
 			SELECT {fields}
 			FROM tbl_order_item i
@@ -80,6 +85,8 @@ class jqCols extends jqGrid
 									'unset' => true,
 									),
 		);
+
+		$this->render_filter_toolbar = true;
 	}
 
 	protected function parseRow($r)

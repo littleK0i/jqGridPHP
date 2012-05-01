@@ -1,6 +1,8 @@
+<?php $rendered_grid = $jq_loader->render('jqOperCustom'); ?>
+
 <script>
 
-<?=$jq_loader->render('jqOperCustom');?>
+<?= $rendered_grid ?>
 
 //custom button
 $grid.jqGrid("navButtonAdd", pager, 

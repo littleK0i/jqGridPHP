@@ -3,10 +3,10 @@
 class jqGrid_Exception_Render extends jqGrid_Exception
 {
 	protected $exception_type = 'render';
-	protected $output_type    = '';
+	protected $output_type    = 'trigger_error';
 
 	public function __toString()
 	{
-		return 'document.write("Grid render failed: ' . htmlspecialchars($this->getMessage(), ENT_QUOTES) . '");';
+		return $this->getMessage();
 	}
 }

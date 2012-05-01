@@ -1,6 +1,8 @@
+<?php $rendered_grid = $jq_loader->render('jqOutExcel'); ?>
+
 <script>
 
-<?=$jq_loader->render('jqOutExcel');?>
+<?= $rendered_grid ?>
 $grid.filterToolbar();
 
 //custom excel export

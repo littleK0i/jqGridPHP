@@ -1,11 +1,5 @@
 <?php
 
-#Directory separator shotrcut
-if(!defined('DS'))
-{
-    define('DS', DIRECTORY_SEPARATOR);
-}
-
 class jqGridLoader
 {
 	protected $root_path;
@@ -35,9 +29,11 @@ class jqGridLoader
 	 */
 	public function __construct()
 	{
+		$this->checkEnvironment();
+
 		#Root_path
-		$this->root_path = dirname(__FILE__) . DS;
-		$this->settings['grid_path'] = $this->root_path . 'grids' . DS;
+		$this->root_path = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+		$this->settings['grid_path'] = $this->root_path . 'grids' . DIRECTORY_SEPARATOR;
 
 		#Load base grid class
 		require_once($this->root_path . 'jqGrid.php');
@@ -202,18 +198,29 @@ class jqGridLoader
 		#Root class
 		if(count($parts) == 2)
 		{
-			$path = $this->root_path . $parts[1] . DS . $parts[1] . '.php';
+			$path = $this->root_path . $parts[1] . DIRECTORY_SEPARATOR . $parts[1] . '.php';
 		}
 		#Extend class
 		else
 		{
-			$path = $this->root_path . implode(DS, array_slice($parts, 1)) . '.php';
+			$path = $this->root_path . implode(DIRECTORY_SEPARATOR, array_slice($parts, 1)) . '.php';
 		}
 
 		#Do not interfere with other autoloads
 		if(file_exists($path))
 		{
 			require $path;
+		}
+	}
+
+	/**
+	 * Check php environment to determine possible problems
+	 */
+	protected function checkEnvironment()
+	{
+		if(version_compare(PHP_VERSION, '5.2.0', '<'))
+		{
+			trigger_error('You need at least PHP 5.2 to run jqGridPHP', E_USER_ERROR);
 		}
 	}
 }

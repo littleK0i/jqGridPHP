@@ -73,6 +73,9 @@ class jqWelcome extends jqGrid
 
 		#Set nav
 		$this->nav = array('add' => true, 'addtext' => 'Add', 'edit' => true, 'edittext' => 'Edit', 'del' => true, 'deltext' => 'Delete', 'prmEdit' => array('width' => '300px'), 'prmAdd' => array('width' => '300px'), 'excel' => true, 'exceltext' => 'Excel');
+
+		#Add filter toolbar
+		$this->render_filter_toolbar = true;
 	}
 	
 	protected function parseRow($r)

@@ -1,6 +1,8 @@
+<?php $rendered_grid = $jq_loader->render('jqOutComplex'); ?>
+
 <script>
 
-<?=$jq_loader->render('jqOutComplex');?>
+<?= $rendered_grid ?>
 $grid.filterToolbar();
 
 </script>

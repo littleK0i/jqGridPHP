@@ -1,3 +1,5 @@
+<?php $rendered_grid = $jq_loader->render('jqOutTreeFull'); ?>
+
 <script>
 
 var opts = {
@@ -8,7 +10,7 @@ var opts = {
 	'viewrecords'   : false
 };
 
-<?=$jq_loader->render('jqOutTreeFull', 'opts');?>
+<?= $rendered_grid ?>
 
 </script>
 

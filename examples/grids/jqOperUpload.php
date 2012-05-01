@@ -5,7 +5,7 @@ class jqOperUpload extends jqGrid
 	protected function init()
 	{
 		$this->file_ext = array('jpg' => 'jpg', 'gif' => 'gif', 'png' => 'png');
-		$this->img_path = $this->loader->get('grid_path') . $this->grid_id . DS;
+		$this->img_path = $this->loader->get('grid_path') . $this->grid_id . DIRECTORY_SEPARATOR;
 
 		$this->table = 'tbl_files';
 

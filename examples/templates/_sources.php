@@ -1,11 +1,11 @@
 <div id="tabs" style="width: 800px; margin-top: 15px;">
 	<ul>
 		<li><a href="#tabs-info">Info</a></li>
-		<li><a href="#tabs-php">PHP</a></li>
+		<li><a href="#tabs-php">PHP Grid</a></li>
 		<?php if(isset($source_php2)):?>
-		<li><a href="#tabs-php2">PHP 2</a></li>
+		<li><a href="#tabs-php2">PHP Subgrid</a></li>
 		<?php endif;?>
-		<li><a href="#tabs-js">JS</a></li>
+		<li><a href="#tabs-js">Template</a></li>
 	</ul>
 	
 	<div id="tabs-info">

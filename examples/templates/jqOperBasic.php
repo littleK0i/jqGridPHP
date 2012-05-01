@@ -1,6 +1,8 @@
+<?php $rendered_grid = $jq_loader->render('jqOperBasic'); ?>
+
 <script>
 
-<?=$jq_loader->render('jqOperBasic');?>
+<?= $rendered_grid ?>
 
 </script>
 	

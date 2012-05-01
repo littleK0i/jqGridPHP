@@ -1,6 +1,8 @@
+<?php $rendered_grid = $jq_loader->render('jqExceptionOutput'); ?>
+
 <script>
 
-<?=$jq_loader->render('jqExceptionOutput');?>
+<?= $rendered_grid ?>
 $grid.filterToolbar();
 
 </script>

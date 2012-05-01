@@ -1,20 +1,8 @@
+<?php $rendered_grid = $jq_loader->render('jqCols'); ?>
+
 <script>
 
-var opts = {
-	sortname : 'book_id',
-	sortorder: 'asc',
-	
-	//additional options to render summary row
-	'footerrow'    : true,
-	'gridComplete' : function()
-	{
-		$(this).jqGrid('extFooterAgg');
-		$(this).jqGrid('extHighlight');
-	}
-};
-
-<?=$jq_loader->render('jqCols', 'opts');?>
-$grid.filterToolbar();
+<?= $rendered_grid ?>
 
 </script>
 	

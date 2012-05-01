@@ -4,11 +4,11 @@
 	<title>Examples</title>
 
 	<!--jQuery-->
-	<script src="http://yandex.st/jquery/1.5.2/jquery.min.js"></script>
+	<script src="http://yandex.st/jquery/1.7.2/jquery.min.js"></script>
 
 	<!--jQuery UI-->
 	<script src="http://yandex.st/jquery-ui/1.8.11/jquery-ui.min.js"></script>
-	<link href="http://yandex.st/jquery-ui/1.8.11/themes/redmond/jquery.ui.all.min.css" rel="stylesheet" type="text/css"></link>
+	<link href="http://yandex.st/jquery-ui/1.8.11/themes/redmond/jquery.ui.all.min.css" rel="stylesheet" type="text/css" />
 	
 	<script src="/jqgrid/plugins/ui.multiselect.js"></script>
 	<link href="/jqgrid/plugins/ui.multiselect.css" rel="stylesheet" type="text/css" />
@@ -97,14 +97,14 @@
 
 <body>
 	<?php if(isset($_REQUEST['iframe'])) : ?>
-	<?php require 'templates' . DS . $grid . '.php'; ?>
+	<?php require 'templates' . DIRECTORY_SEPARATOR . $grid . '.php'; ?>
 	<?php else : ?>
 	<table>
 	<tr>
-		<td width="260px" valign="top"><?php require 'templates' . DS . '_accordion.php'; ?></td>
+		<td width="260px" valign="top"><?php require 'templates' . DIRECTORY_SEPARATOR . '_accordion.php'; ?></td>
 		<td valign="top" style="padding-left: 10px;">
-			<?php require 'templates' . DS . $grid . '.php'; ?>
-			<?php require 'templates' . DS . '_sources.php'; ?>
+			<?php require 'templates' . DIRECTORY_SEPARATOR . $grid . '.php'; ?>
+			<?php require 'templates' . DIRECTORY_SEPARATOR . '_sources.php'; ?>
 		</td>
 	</tr>
 	</table>

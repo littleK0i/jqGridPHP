@@ -86,12 +86,16 @@ abstract class jqGrid
 
 		'options' => array(),
 
-		'reserved_col_names' => array('page', 'sidx', 'sord', 'nd', 'oper', 'filters'),
+		'reserved_col_names' => array('page', 'sidx', 'sord', 'nd', 'oper', 'filters', 'rd'),
 	);
 
 	protected $reserved_col_names;
 	protected $internal_col_prop = array('db', 'db_agg', 'unset', 'manual', 'search_op');
 	protected $query_placeholders = array('fields' => '{fields}', 'where' => '{where}');
+
+	protected $render_data = array();
+	protected $render_extend_default = 'opts';
+	protected $render_filter_toolbar = false;
 
 	/**
 	 * Class constructor, initializes basic properties
@@ -111,6 +115,7 @@ abstract class jqGrid
 		$this->DB		= $loader->loadDB();
 
 		$this->reserved_col_names = $this->getReservedColNames();
+		$this->render_data = $this->getRenderData();
 
 		//----------------
 		// Init
@@ -290,18 +295,28 @@ abstract class jqGrid
 
 	/**
 	 * MAIN ACTION (3): Render grid
-	 * 
+	 *
 	 * $jq_loader->render('jq_example');
 	 *
-	 * @param string $extend name of javascript variable to extend PHP-rendered options
-	 * @param string $suffix suffix for grid_id. Use it if you need to set multiple grids on the same page
-	 * @return string final javascript
+	 * @param array $options
+	 * @return string
 	 */
-	public function render($extend=null, $suffix=null)
+	public function render($options=array())
 	{
 		$data = array();
-		$data['extend'] = $extend;
-		$data['suffix'] = $suffix ? jqGrid_Utils::checkAlphanum($suffix) : '';
+		$data['extend'] = isset($options['extend']) ? $options['extend'] : $this->render_extend_default;
+		$data['suffix'] = isset($options['suffix']) ? jqGrid_Utils::checkAlphanum($options['suffix']) : '';
+
+		//------------------
+		// Set render data
+		//------------------
+
+		$this->render_data = isset($options['render_data']) ? $options['render_data'] : array();
+
+		if(!is_array($this->render_data))
+		{
+			throw new jqGrid_Exception_Render('Render data must be an array');
+		}
 		
 		//------------------
 		// Render ids
@@ -380,9 +395,9 @@ abstract class jqGrid
 		{
 			case 'json':
 				$r = array(
-					'error'	    => 1,
-					'error_msg' => $e->getMessage(),
-					'error_code'=> $e->getCode(),
+					'error'	     => 1,
+					'error_msg'  => $e->getMessage(),
+					'error_code' => $e->getCode(),
 					'error_data' => $e->getData(),
 					'error_type' => $e->getExceptionType(),
 				);
@@ -400,6 +415,10 @@ abstract class jqGrid
 				}
 
 				$this->json($r);
+			break;
+
+			case 'trigger_error':
+				trigger_error($e->getMessage(), E_USER_ERROR);
 			break;
 		}
 
@@ -780,13 +799,12 @@ abstract class jqGrid
 
 	/**
 	 * This is the ONLY entry-point for external data
-	 * Use it for advanced filtering
 	 *
-	 * @return array - prepared input
+	 * @return array
 	 */
 	protected function getInput()
 	{
-		$req = $_REQUEST; //do not modify the original request! ever!
+		$req = array_merge($_GET, $_POST);
 
 		#Ajax input is always utf-8 -> convert it
 		if($this->loader->get('encoding') != 'utf-8' and isset($_SERVER['HTTP_X_REQUESTED_WITH']))
@@ -795,6 +813,17 @@ abstract class jqGrid
 		}
 
 		return $req;
+	}
+
+	/**
+	 * Extracts render data from input
+	 *
+	 * @return array
+	 */
+	protected function getRenderData()
+	{
+		$rd = $this->input('rd');
+		return is_array($rd) ? $rd : array();
 	}
 
 	/**
@@ -917,14 +946,14 @@ abstract class jqGrid
 		}
 	
 		#Delete single value
-		if(is_numeric($id))
+		if(is_scalar($id))
 		{
 			$this->DB->delete($this->table, array($this->primary_key => $id));
 		}
 		#Delete multiple value
 		else
 		{
-			$ids = array_map('intval', explode(',', $id));
+			$ids = array_map(array($this->DB, 'quote'), explode(',', $id));
 			$this->DB->delete($this->table, $this->primary_key . ' IN (' . implode(',', $ids) . ')');
 		}
 	}
@@ -978,19 +1007,20 @@ abstract class jqGrid
 	 */
 	protected function outJson()
 	{
-		$r->page    =& $this->page;
-		$r->total   =& $this->total;
-		$r->records =& $this->count;
-		$r->rows 	=& $this->rows;
-
-		$r->userdata = $this->userdata;
+		$data = array(
+			'page'     => $this->page,
+			'total'    => $this->total,
+			'count'    => $this->count,
+			'rows'     => $this->rows,
+			'userdata' => $this->userdata,
+		);
 
 		if($this->loader->get('debug_output'))
 		{
-			$r->debug =& $this->debug;
+			$data['debug'] = $this->debug;
 		}
 
-		$this->json($r);
+		$this->json($data);
 	}
 
 	/**
@@ -1066,7 +1096,16 @@ abstract class jqGrid
 	 */
 	protected function renderGridUrl()
 	{
-		return '?' . http_build_query(array($this->loader->get('input_grid') => $this->grid_id));
+		$params = array(
+			$this->loader->get('input_grid') => $this->grid_id,
+		);
+
+		if($this->render_data)
+		{
+			$params['rd'] = $this->render_data;
+		}
+
+		return '?' . http_build_query($params);
 	}
 
 	/**
@@ -1150,24 +1189,16 @@ var pager = "#'.$data['pager_id'].'";
 var $grid = $("#'.$data['id'].'");
 var $'.$data['id'].' = $grid;
 
-$grid.jqGrid(';
+$grid.jqGrid($.extend('.jqGrid_Utils::jsonEncode($data['options']).', typeof('.$data['extend'].') == "undefined" ? {} : ' . $data['extend'] . "));\n";
 
-		if(isset($data['extend']) and $data['extend'])
-		{
-			$code .= '$.extend('.jqGrid_Utils::jsonEncode($data['options']).', ' . $data['extend'] . ')';
-		}
-		else
-		{
-			$code .= jqGrid_Utils::jsonEncode($data['options']);
-		}
-
-		$code .= ");\n";
+		#Event binder
+		$code .= "\$grid.jqGrid('extBindEvents');\n";
 
 		#NavGrid
 		if(isset($data['nav']))
 		{
 			$nav_special = array('prmEdit', 'prmAdd', 'prmDel', 'prmSearch', 'prmView');
-			$code .= '$grid.jqGrid("navGrid", pager, ' . jqGrid_Utils::jsonEncode(array_diff_key($data['nav'], array_flip($nav_special)));
+			$code .= "\$grid.jqGrid('navGrid', pager, " . jqGrid_Utils::jsonEncode(array_diff_key($data['nav'], array_flip($nav_special)));
 
 			#Respect the argument order
 			foreach($nav_special as $k)
@@ -1187,8 +1218,14 @@ $grid.jqGrid(';
 			#Excel button
 			if(isset($data['nav']['excel']) and $data['nav']['excel'])
 			{
-				$code .= '$grid.jqGrid("navButtonAdd", pager, {caption: "'.$data['nav']['exceltext'].'", title: "'.$data['nav']['exceltext'].'", icon: "ui-extlink", onClickButton: function(){ $(this).jqGrid("extExport", {"export" : "ExcelHtml", "rows": -1}); }});' . "\n";
+				$code .= "\$grid.jqGrid('navButtonAdd', pager, {caption: '{$data['nav']['exceltext']}', title: '{$data['nav']['exceltext']}', icon: 'ui-extlink', onClickButton: function(){ \$(this).jqGrid('extExport', {'export' : 'ExcelHtml', 'rows': -1}); }});\n";
 			}
+		}
+
+		#Filter toolbar
+		if($this->render_filter_toolbar)
+		{
+			$code .= "\$grid.jqGrid('filterToolbar');\n";
 		}
 
 		return $code;

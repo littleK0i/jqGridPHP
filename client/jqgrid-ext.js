@@ -344,6 +344,15 @@ $.jgrid.extend(
 		});
 	},
 	
+	'extBindEvents' : function()
+	{
+		$(this).bind('jqGridGridComplete', function()
+		{
+			$(this).jqGrid('extHighlight');
+			$(this).jqGrid('extFooterAgg');
+		});
+	},
+	
 	'extGroupHeader': function(opts)
 	{
 		var $t = this[0];

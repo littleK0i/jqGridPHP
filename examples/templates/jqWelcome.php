@@ -1,21 +1,12 @@
-<script>
+<?php $rendered_grid = $jq_loader->render('jqWelcome'); ?>
 
+<script>
 var opts = {
 	'sortname' : 'id',
 	'sortorder': 'desc',
 	'height' : 240,
-	'width'  : 800,
-	
-	//'footerrow': true,
-	
-	'gridComplete' : function()
-	{
-		$(this).jqGrid('extHighlight');
-		//$(this).jqGrid('extFooterAgg');
-	}
+	'width'  : 800
 };
 
-<?=$jq_loader->render('jqWelcome', 'opts');?>
-$grid.filterToolbar();
-
+<?= $rendered_grid ?>
 </script>

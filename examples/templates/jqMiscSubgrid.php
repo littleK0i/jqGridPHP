@@ -1,3 +1,5 @@
+<?php $rendered_grid = $jq_loader->render('jqMiscSubgrid'); ?>
+
 <script>
 lastsel = null;
 
@@ -14,20 +16,10 @@ var opts = {
 			dataType: 'script',
 			data: {'oper' : 'renderSubgrid', 'row_id' : row_id}
 		});
-	},
-	
-	onSelectRow: function(id)
-	{
-        if(id && id!==lastsel)
-		{
-            $(this).jqGrid('restoreRow',lastsel);
-            $(this).jqGrid('editRow',id,true);
-            lastsel=id;
-        }
 	}
 };
 
-<?=$jq_loader->render('jqMiscSubgrid', 'opts');?>
+<?= $rendered_grid ?>
 
 </script>
 	

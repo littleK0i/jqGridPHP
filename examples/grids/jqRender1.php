@@ -45,6 +45,8 @@ class jqRender1 extends jqGrid
 								'align'	=> 'center',
 								),
 		);
+
+		$this->render_filter_toolbar = true;
 	}
 
 	#Final options hook. Called on rendering only!

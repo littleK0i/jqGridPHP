@@ -1,3 +1,5 @@
+<?php $rendered_grid = $jq_loader->render('jqOutAdvancedSearch'); ?>
+
 <script>
 var template1 = {
 	'groupOp' : 'AND',
@@ -24,7 +26,7 @@ var template2 = {
 	]
 };
 
-<?=$jq_loader->render('jqOutAdvancedSearch');?>
+<?= $rendered_grid ?>
 
 </script>
 

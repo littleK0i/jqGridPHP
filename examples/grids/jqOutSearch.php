@@ -77,6 +77,8 @@ class jqOutSearch extends jqGrid
 									'search_op' => 'auto', //auto recognize search type (default)
 									),
 		);
+
+		$this->render_filter_toolbar = true;
 	}
 
 	#Custom search operation

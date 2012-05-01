@@ -1,7 +1,8 @@
+<?php $rendered_grid = $jq_loader->render('jqOutSearch'); ?>
+
 <script>
 
-<?=$jq_loader->render('jqOutSearch');?>
-$grid.filterToolbar();
+<?= $rendered_grid ?>
 
 </script>
 	

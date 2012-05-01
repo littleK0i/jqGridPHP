@@ -1,6 +1,8 @@
+<?php $rendered_grid = $jq_loader->render('jqMssql'); ?>
+
 <script>
 
-<?=$jq_loader->render('jqMssql');?>
+<?= $rendered_grid ?>
 $grid.filterToolbar();
 
 </script>
