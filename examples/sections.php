@@ -5,7 +5,7 @@ $_SECTIONS = array(
 		'name'	=> array('en' => 'General', 'ru' => 'Основные'),
 		'items' => array('simple'  => array('en' => 'Basic grid', 'ru' => 'Базовая таблица'),
 						 'cols'	   => array('en' => 'New column options', 'ru' => 'Новые опции колонок'),
-			             //'renderData' => array('en' => 'Passing render data', 'ru' => 'Передача render data'),
+			             'renderData' => array('en' => 'Passing render data', 'ru' => 'Передача render data'),
 						 //'csv'     => 'Alternative data source',
 						),
 	),

@@ -822,8 +822,18 @@ abstract class jqGrid
 	 */
 	protected function getRenderData()
 	{
-		$rd = $this->input('rd');
-		return is_array($rd) ? $rd : array();
+		$data = array();
+
+		foreach($this->input as $k => $v)
+		{
+			if(strpos($k, '__') === 0)
+			{
+				$k = substr($k, 2);
+				$data[$k] = $v;
+			}
+		}
+
+		return $data;
 	}
 
 	/**
@@ -1100,9 +1110,10 @@ abstract class jqGrid
 			$this->loader->get('input_grid') => $this->grid_id,
 		);
 
-		if($this->render_data)
+		foreach($this->render_data as $k => $v)
 		{
-			$params['rd'] = $this->render_data;
+			$k = '__' . $k;
+			$params[$k] = $v;
 		}
 
 		return '?' . http_build_query($params);
