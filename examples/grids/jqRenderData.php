@@ -6,8 +6,6 @@ class jqRenderData extends jqGrid
 	{
 		$this->options = array(
 			'rowNum' => 10,
-			'width'  => 600,
-			'height' => 200,
 		);
 
 		#Set table
@@ -56,6 +54,6 @@ class jqRenderData extends jqGrid
 		#Set essential condition
 		$this->where[] = 'o.customer_id = ' . intval($this->render_data['customer_id']);
 
-		$this->nav = array('add' => true, 'edit' => true);
+		//$this->nav = array('add' => true, 'edit' => true);
 	}
 }
