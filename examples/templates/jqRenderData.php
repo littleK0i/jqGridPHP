@@ -1,10 +1,6 @@
-<?php $rendered_grid = $jq_loader->render('jqRenderData', array('render_data' => array('customer_id' => 52))); ?>
+<?php $rendered_grid = $jq_loader->render('jqRenderData', array('data' => array('customer_id' => 52))); ?>
 
-<script>
-
-<?= $rendered_grid ?>
-
-</script>
+<script><?= $rendered_grid ?></script>
 
 <div id="descr">
 	Simple grid with basic functions.

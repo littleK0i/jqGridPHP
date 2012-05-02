@@ -1,9 +1,7 @@
 <?php $rendered_grid = $jq_loader->render('jqOutSearch'); ?>
 
 <script>
-
 <?= $rendered_grid ?>
-
 </script>
 	
 <div id="descr">

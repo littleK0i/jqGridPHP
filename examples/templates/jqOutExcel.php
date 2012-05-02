@@ -1,7 +1,6 @@
 <?php $rendered_grid = $jq_loader->render('jqOutExcel'); ?>
 
 <script>
-
 <?= $rendered_grid ?>
 $grid.filterToolbar();
 
@@ -19,7 +18,6 @@ $grid.jqGrid("navButtonAdd", pager,
 		$(this).jqGrid("extExport", {"export" : "ExcelHtml", "rows" : rows});
 	}
 });
-
 </script>
 	
 <div id="descr">

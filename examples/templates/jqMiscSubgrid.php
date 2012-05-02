@@ -20,7 +20,6 @@ var opts = {
 };
 
 <?= $rendered_grid ?>
-
 </script>
 	
 <div id="descr">

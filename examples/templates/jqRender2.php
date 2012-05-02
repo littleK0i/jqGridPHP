@@ -1,9 +1,6 @@
 <?php $rendered_grid = $jq_loader->render('jqRender2'); ?>
 
-<script>
-<?= $rendered_grid ?>
-
-</script>
+<script><?= $rendered_grid ?></script>
 	
 <div id="descr">
 	Navigator options are similar to grid options.<br>

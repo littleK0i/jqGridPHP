@@ -1,10 +1,6 @@
 <?php $rendered_grid = $jq_loader->render('jqCols'); ?>
 
-<script>
-
-<?= $rendered_grid ?>
-
-</script>
+<script><?= $rendered_grid ?></script>
 	
 <div id="descr">
 	This exmaple introduce new column options: <b>db</b>, <b>db_agg</b>, <b>manual</b> and <b>unset</b>.<br><br>

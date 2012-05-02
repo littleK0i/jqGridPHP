@@ -1,10 +1,9 @@
 <?php $rendered_grid = $jq_loader->render('jqMiscGroupHeaderEx'); ?>
 
 <script>
-
 var opts =
 {
-	'groupHeaderWR' : 
+	'groupHeaderWR' :
 	{
 		'book'     : {'label' : 'Book'},
 		'order'    : {'label' : 'Order'},
@@ -29,7 +28,7 @@ $grid.navButtonAdd(pager, { caption:"Column chooser", buttonicon:"ui-icon-newwin
 		//this.jqGrid("remapColumns", perm, true);
 		this.jqGrid('updateGroupHeaderWR');
 	}});
-}}); 
+}});
 </script>
 	
 <div id="descr">

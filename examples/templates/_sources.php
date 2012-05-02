@@ -23,6 +23,6 @@
 	<?php endif;?>
 	
 	<div id="tabs-js">
-		<pre><code class="javascript"><?=trim(htmlspecialchars($source_js));?></pre>
+		<pre><code class="html"><?=trim(htmlspecialchars($source_js));?></pre>
 	</div>
 </div>

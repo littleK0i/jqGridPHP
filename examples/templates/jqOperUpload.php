@@ -1,12 +1,5 @@
 <?php $rendered_grid = $jq_loader->render('jqOperUpload'); ?>
 
-<style>
-.ui-jqgrid TR.jqgrow IMG
-{
-	margin: 2px;
-}
-</style>
-
 <script>
 var opts = 
 {
@@ -31,3 +24,10 @@ $grid.filterToolbar();
 	Все данные отправляются на сервер в одном запросе.<br>
 	Для отправки используется <b>jQuery Ajax Form</b> плагин.
 </div>
+
+<style>
+.ui-jqgrid TR.jqgrow IMG
+{
+	margin: 2px;
+}
+</style>

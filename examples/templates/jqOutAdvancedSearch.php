@@ -25,9 +25,7 @@ var template2 = {
 		}
 	]
 };
-
 <?= $rendered_grid ?>
-
 </script>
 
 <div id="descr">

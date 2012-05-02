@@ -1,7 +1,6 @@
 <?php $rendered_grid = $jq_loader->render('jqMiscGroupHeader'); ?>
 
 <script>
-
 <?= $rendered_grid ?>
 
 $grid.jqGrid('extGroupHeader',

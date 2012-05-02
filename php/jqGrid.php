@@ -311,7 +311,7 @@ abstract class jqGrid
 		// Set render data
 		//------------------
 
-		$this->render_data = isset($options['render_data']) ? $options['render_data'] : array();
+		$this->render_data = isset($options['data']) ? $options['data'] : array();
 
 		if(!is_array($this->render_data))
 		{

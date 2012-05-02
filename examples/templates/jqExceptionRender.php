@@ -1,10 +1,8 @@
 <?php $rendered_grid = $jq_loader->render('jqExceptionRender'); ?>
 
 <script>
-
 <?= $rendered_grid ?>
 $grid.filterToolbar();
-
 </script>
 
 <div id="descr_rus">

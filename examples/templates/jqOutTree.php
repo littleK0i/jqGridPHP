@@ -1,7 +1,6 @@
 <?php $rendered_grid = $jq_loader->render('jqOutTree'); ?>
 
 <script>
-
 var opts = {
 	'treeGrid'      : true,
 	'treeGridModel' : 'adjacency',
@@ -11,7 +10,6 @@ var opts = {
 };
 
 <?= $rendered_grid ?>
-
 </script>
 
 <div id="descr_rus">

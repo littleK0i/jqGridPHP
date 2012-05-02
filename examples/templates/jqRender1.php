@@ -1,7 +1,6 @@
 <?php $rendered_grid = $jq_loader->render('jqRender1'); ?>
 
 <script>
-
 //JS functions in JS code - recommended way
 var opts = {
 	onSelectAll: function()
@@ -11,7 +10,6 @@ var opts = {
 };
 
 <?= $rendered_grid ?>
-
 </script>
 	
 <div id="descr">
