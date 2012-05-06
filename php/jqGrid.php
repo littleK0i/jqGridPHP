@@ -298,25 +298,26 @@ abstract class jqGrid
 	 *
 	 * $jq_loader->render('jq_example');
 	 *
-	 * @param array $options
+	 * @param array $render_data
 	 * @return string
 	 */
-	public function render($options=array())
+	public function render($render_data=array())
 	{
-		$data = array();
-		$data['extend'] = isset($options['extend']) ? $options['extend'] : $this->render_extend_default;
-		$data['suffix'] = isset($options['suffix']) ? jqGrid_Utils::checkAlphanum($options['suffix']) : '';
-
-		//------------------
-		// Set render data
-		//------------------
-
-		$this->render_data = isset($options['data']) ? $options['data'] : array();
+		$this->render_data = $this->renderGridData($render_data);
 
 		if(!is_array($this->render_data))
 		{
 			throw new jqGrid_Exception_Render('Render data must be an array');
 		}
+
+		//------------------
+		// Apply special render_data keys
+		//------------------
+
+		$data = array();
+
+		$data['extend'] = isset($this->render_data['extend']) ? $this->render_data['extend'] : $this->render_extend_default;
+		$data['suffix'] = isset($this->render_data['suffix']) ? jqGrid_Utils::checkAlphanum($this->render_data['suffix']) : '';
 		
 		//------------------
 		// Render ids
@@ -343,21 +344,21 @@ abstract class jqGrid
 		// Render options
 		//-----------------
 
-		$opts = array(
+		$options = array(
 			'colModel' => $colModel,
 			'pager'	=> '#'.$data['pager_id'],
 		);
 
 		#URL's
-		$opts['url'] = $opts['editurl'] = $opts['cellurl'] = $this->renderGridUrl();
+		$options['url'] = $options['editurl'] = $options['cellurl'] = $this->renderGridUrl();
 		
 		#Any postData?
 		if($post_data = $this->renderPostData())
 		{
-			$opts['postData'] = $post_data;
+			$options['postData'] = $post_data;
 		}
 		
-		$data['options'] = $this->renderOptions(array_merge($this->default['options'], $opts, $this->options));
+		$data['options'] = $this->renderOptions(array_merge($this->default['options'], $options, $this->options));
 
 		//-----------------
 		// Render navigator
@@ -1097,6 +1098,17 @@ abstract class jqGrid
 	protected function renderColumn($c)
 	{
 		return $c;
+	}
+
+	/**
+	 * (Render) Modify 'render_data'
+	 *
+	 * @param $data - original data passed to 'render' public method
+	 * @return array
+	 */
+	protected function renderGridData($data)
+	{
+		return $data;
 	}
 
 	/**

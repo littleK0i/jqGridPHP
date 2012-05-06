@@ -5,6 +5,7 @@ class jqMiscSubgrid2 extends jqGrid
 	protected function init()
 	{
 		$this->options = array('rowNum' => 5, 'width' => 600, 'height' => 110);
+		$this->render_extend_default = '{}';
 	
 		#Set database table
 		$this->table = 'tbl_order_item';
@@ -50,23 +51,12 @@ class jqMiscSubgrid2 extends jqGrid
 		);
 		
 		#Set essential condition
-		if($this->input('customer_id'))
-		{
-			$this->where[] = 'o.customer_id = ' . intval($this->input('customer_id'));
-		}
+		$this->where[] = 'o.customer_id = ' . intval($this->render_data['suffix']);
 	}
 	
 	#prevent common html rendering
 	protected function renderHtml($data)
 	{
 		return '';
-	}
-	
-	protected function renderComplete($data)
-	{
-		#Add condition to postData
-		$data['options']['postData']['customer_id'] = $data['suffix'];
-		
-		return parent::renderComplete($data);
 	}
 }

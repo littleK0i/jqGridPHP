@@ -1,6 +1,6 @@
-<?php $rendered_grid = $jq_loader->render('jqExceptionOper'); ?>
-
-<script><?= $rendered_grid ?></script>
+<script>
+<?= $rendered_grid ?>
+</script>
 
 <div id="descr_rus">
 	Самый частый пример использования исключений - валидация входящих данных на стороне сервера.<br><br>

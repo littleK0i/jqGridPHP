@@ -5,7 +5,7 @@
 		<?php if(isset($source_php2)):?>
 		<li><a href="#tabs-php2">PHP Subgrid</a></li>
 		<?php endif;?>
-		<li><a href="#tabs-js">Template</a></li>
+		<li><a href="#tabs-js">Javascript</a></li>
 	</ul>
 	
 	<div id="tabs-info">

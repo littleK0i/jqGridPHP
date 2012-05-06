@@ -1,5 +1,3 @@
-<?php $rendered_grid = $jq_loader->render('jqOutTreeFull'); ?>
-
 <script>
 var opts = {
 	'treeGrid'      : true,

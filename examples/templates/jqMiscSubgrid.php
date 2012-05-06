@@ -1,8 +1,4 @@
-<?php $rendered_grid = $jq_loader->render('jqMiscSubgrid'); ?>
-
 <script>
-lastsel = null;
-
 var opts = {
 	subGrid: true,
 	subGridRowExpanded: function(subgrid_id, row_id) 

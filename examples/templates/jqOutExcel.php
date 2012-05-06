@@ -1,5 +1,3 @@
-<?php $rendered_grid = $jq_loader->render('jqOutExcel'); ?>
-
 <script>
 <?= $rendered_grid ?>
 $grid.filterToolbar();

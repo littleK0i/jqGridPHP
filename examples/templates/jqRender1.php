@@ -1,5 +1,3 @@
-<?php $rendered_grid = $jq_loader->render('jqRender1'); ?>
-
 <script>
 //JS functions in JS code - recommended way
 var opts = {

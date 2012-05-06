@@ -1,5 +1,3 @@
-<?php $rendered_grid = $jq_loader->render('jqOutSort'); ?>
-
 <script>
 <?= $rendered_grid ?>
 </script>

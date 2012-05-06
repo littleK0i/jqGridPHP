@@ -1,5 +1,3 @@
-<?php $rendered_grid = $jq_loader->render('jqOutComplex'); ?>
-
 <script>
 <?= $rendered_grid ?>
 $grid.filterToolbar();

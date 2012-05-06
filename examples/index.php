@@ -30,6 +30,9 @@ $jq_loader->autorun();
 $grid = isset($_REQUEST['render']) ? $_REQUEST['render'] : 'jqSimple';
 $grid = preg_replace('#[^a-zA-Z0-9_-]#', '', $grid); //safe
 
+//Most examples use simple grids without extra params
+$rendered_grid = $jq_loader->render($grid);
+
 //-----------
 // Get sources
 //-----------
@@ -43,7 +46,7 @@ if(file_exists('grids/' . $grid . '2.php'))
 
 $source_tpl = file_get_contents('templates/' . $grid . '.php');
 
-preg_match('#(.+?)<div id="descr#is', $source_tpl, $m);
-$source_js = $m[1];
+preg_match('#<script>(.+?)</script>#is', $source_tpl, $m);
+$source_js = trim($m[0]);
 
 require 'templates/_layout.php';
