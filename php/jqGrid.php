@@ -5,6 +5,7 @@ abstract class jqGrid
 	protected $grid_id;
 	protected $input;
 	protected $DB;
+    protected $base_url;
 
 	protected $loader;
 	protected $table;
@@ -94,7 +95,8 @@ abstract class jqGrid
 	protected $query_placeholders = array('fields' => '{fields}', 'where' => '{where}');
 
 	protected $render_data = array();
-	protected $render_extend_default = 'opts';
+	protected $render_extend = 'opts';
+    protected $render_suffix_col = null;
 	protected $render_filter_toolbar = false;
 
 	/**
@@ -303,27 +305,27 @@ abstract class jqGrid
 	 */
 	public function render($render_data=array())
 	{
-		$this->render_data = $this->renderGridData($render_data);
-
-		if(!is_array($this->render_data))
+		if(!is_array($render_data))
 		{
 			throw new jqGrid_Exception_Render('Render data must be an array');
 		}
 
+        $this->render_data = $render_data;
+
 		//------------------
-		// Apply special render_data keys
+		// Basic data
 		//------------------
 
 		$data = array();
 
-		$data['extend'] = isset($this->render_data['extend']) ? $this->render_data['extend'] : $this->render_extend_default;
-		$data['suffix'] = isset($this->render_data['suffix']) ? jqGrid_Utils::checkAlphanum($this->render_data['suffix']) : '';
+		$data['extend'] = $this->render_extend;
+		$data['suffix'] = $this->renderGridSuffix($render_data);
 		
 		//------------------
 		// Render ids
 		//------------------
 		
-		$data['id'] = $this->grid_id . $data['suffix'];
+		$data['id']       = $this->grid_id . $data['suffix'];
 		$data['pager_id'] = $this->grid_id . $data['suffix'] . '_p';
 		
 		//-----------------
@@ -1100,16 +1102,21 @@ abstract class jqGrid
 		return $c;
 	}
 
-	/**
-	 * (Render) Modify 'render_data'
-	 *
-	 * @param $data - original data passed to 'render' public method
-	 * @return array
-	 */
-	protected function renderGridData($data)
-	{
-		return $data;
-	}
+    /**
+     * Get grid_id suffix when multiple instances are used on one page
+     *
+     * @param $render_data
+     * @return string
+     */
+    protected function renderGridSuffix($render_data)
+    {
+        if(isset($this->render_suffix_col) and isset($render_data[$this->render_suffix_col]))
+        {
+            return jqGrid_Utils::checkAlphanum($render_data[$this->render_suffix_col]);
+        }
+
+        return '';
+    }
 
 	/**
 	 * (Render) Base url is used into 'url', 'editurl', 'cellurl' options
@@ -1118,17 +1125,14 @@ abstract class jqGrid
 	 */
 	protected function renderGridUrl()
 	{
-		$params = array(
-			$this->loader->get('input_grid') => $this->grid_id,
-		);
-
 		foreach($this->render_data as $k => $v)
 		{
-			$k = '__' . $k;
 			$params[$k] = $v;
 		}
 
-		return '?' . http_build_query($params);
+		$params[$this->loader->get('input_grid')] = $this->grid_id;
+
+		return $this->base_url . '?' . http_build_query($params);
 	}
 
 	/**
@@ -1205,6 +1209,8 @@ document.write(\'<div id="'.$data['pager_id'].'"></div>\');
 	 */
 	protected function renderComplete($data)
 	{
+        $data['extend'] = $data['extend'] ? $data['extend'] : '{}'; //prevent errors on empty 'extend'
+
 		$code = $data['html'] . '
 
 var pager = "#'.$data['pager_id'].'";

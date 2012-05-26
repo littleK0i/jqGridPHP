@@ -10,7 +10,7 @@ var opts = {
 		$.ajax({
 			url: $(this).getGridParam('url'),
 			dataType: 'script',
-			data: {'oper' : 'renderSubgrid', 'row_id' : row_id}
+			data: {'oper' : 'renderSubgrid', 'customer_id' : row_id}
 		});
 	}
 };

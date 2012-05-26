@@ -5,7 +5,8 @@ class jqMiscSubgrid2 extends jqGrid
 	protected function init()
 	{
 		$this->options = array('rowNum' => 5, 'width' => 600, 'height' => 110);
-		$this->render_extend_default = '{}';
+		$this->render_extend = '{}';
+        $this->render_suffix_col = 'customer_id';
 	
 		#Set database table
 		$this->table = 'tbl_order_item';
@@ -51,7 +52,7 @@ class jqMiscSubgrid2 extends jqGrid
 		);
 		
 		#Set essential condition
-		$this->where[] = 'o.customer_id = ' . intval($this->render_data['suffix']);
+		$this->where[] = 'o.customer_id = ' . intval($this->input['customer_id']);
 	}
 	
 	#prevent common html rendering

@@ -52,8 +52,6 @@ class jqRenderData extends jqGrid
 		);
 
 		#Set essential condition
-		$this->where[] = 'o.customer_id = ' . intval($this->render_data['customer_id']);
-
-		//$this->nav = array('add' => true, 'edit' => true);
+		$this->where[] = 'o.customer_id = ' . intval($this->input['customer_id']);
 	}
 }

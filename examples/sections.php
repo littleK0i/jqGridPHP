@@ -42,7 +42,7 @@ $_SECTIONS = array(
 		'name'	=> array('en' => 'Exceptions', 'ru' => 'Обработка ошибок'),
 		'items' => array('exceptionOper'	=> array('en' => 'Oper exception', 'ru' => 'Ошибки операций'),
 						 'exceptionOutput' => array('en' => 'Output exceptions', 'ru' => 'Ошибки вывода данных'),
-						 'exceptionRender' => array('en' => 'Render exceptions', 'ru' => 'Ошибки рендеринга'),
+						 //'exceptionRender' => array('en' => 'Render exceptions', 'ru' => 'Ошибки рендеринга'),
 						 ),
 	),
 	

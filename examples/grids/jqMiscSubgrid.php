@@ -45,7 +45,7 @@ class jqMiscSubgrid extends jqGrid
 	
 	protected function opRenderSubgrid()
 	{
-		echo $this->loader->render('jqMiscSubgrid2', array('suffix' => $this->input('row_id')));
+		echo $this->loader->render('jqMiscSubgrid2', array('customer_id' => $this->input('customer_id')));
 		exit;
 	}
 	
