@@ -335,7 +335,7 @@ $.jgrid.extend(
 				$grid.jqGrid('extLoading', false);
 			});
 			
-			if(!$.browser.msie)
+			if(!$.browser.msie && !$.browser.opera)
 			{
 				$grid.jqGrid('extLoading', true);
 			}
