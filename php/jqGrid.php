@@ -37,8 +37,6 @@ abstract class jqGrid
 	protected $do_search_advanced = true;
 	protected $do_sort = true;
 	protected $do_limit = true;
-
-	protected $render_html = 'classic'; //replace with 'js' to get back to 'document.write'
 	
 	protected $treegrid = false; //'adjacency' or 'nested'
 
@@ -117,7 +115,6 @@ abstract class jqGrid
 		$this->DB		= $loader->loadDB();
 
 		$this->reserved_col_names = $this->getReservedColNames();
-		$this->render_data = $this->getRenderData();
 
 		//----------------
 		// Init
@@ -819,27 +816,6 @@ abstract class jqGrid
 	}
 
 	/**
-	 * Extracts render data from input
-	 *
-	 * @return array
-	 */
-	protected function getRenderData()
-	{
-		$data = array();
-
-		foreach($this->input as $k => $v)
-		{
-			if(strpos($k, '__') === 0)
-			{
-				$k = substr($k, 2);
-				$data[$k] = $v;
-			}
-		}
-
-		return $data;
-	}
-
-	/**
 	 * Get reserved column names specific to this grid
 	 *
 	 * @return array - array of names
@@ -1125,12 +1101,12 @@ abstract class jqGrid
 	 */
 	protected function renderGridUrl()
 	{
+		$params[$this->loader->get('input_grid')] = $this->grid_id;
+
 		foreach($this->render_data as $k => $v)
 		{
 			$params[$k] = $v;
 		}
-
-		$params[$this->loader->get('input_grid')] = $this->grid_id;
 
 		return $this->base_url . '?' . http_build_query($params);
 	}
@@ -1144,27 +1120,12 @@ abstract class jqGrid
 	 */
 	protected function renderHtml($data)
 	{
-		switch($this->render_html)
-		{
-			case 'js':
-				$html = '
-document.write(\'<table id="'.$data['id'].'"></table>\');
-document.write(\'<div id="'.$data['pager_id'].'"></div>\');
-';
-			break;
-
-			case 'classic':
-			default:
-				$html = '
+		return '
 </script>
 <table id="' . $data['id'] . '"></table>
 <div id="' . $data['pager_id'] . '"></div>
 <script>
 ';
-			break;
-		}
-
-		return $html;
 	}
 
 	/**
