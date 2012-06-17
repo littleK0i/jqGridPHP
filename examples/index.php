@@ -44,6 +44,11 @@ if(file_exists('grids/' . $grid . '2.php'))
 	$source_php2 = file_get_contents('grids/' . $grid . '2.php');
 }
 
+if(file_exists('grids/' . $grid . 'Details.php'))
+{
+	$source_php2 = file_get_contents('grids/' . $grid . 'Details.php');
+}
+
 $source_tpl = file_get_contents('templates/' . $grid . '.php');
 
 preg_match('#<script>(.+?)</script>#is', $source_tpl, $m);
