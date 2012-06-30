@@ -999,7 +999,7 @@ abstract class jqGrid
 		$data = array(
 			'page'     => $this->page,
 			'total'    => $this->total,
-			'count'    => $this->count,
+			'records'  => $this->count,
 			'rows'     => $this->rows,
 			'userdata' => $this->userdata,
 		);
