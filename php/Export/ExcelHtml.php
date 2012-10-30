@@ -75,7 +75,7 @@ class jqGrid_Export_ExcelHtml extends jqGrid_Export
 			$t .= '</tr>';
 		}
 
-		$t .= '</table></body></html>';
+		$t .= '</table>';
 
 		$this->html = $t;
 	}
