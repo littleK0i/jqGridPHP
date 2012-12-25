@@ -105,14 +105,18 @@ class jqGridLoader
 	 */
 	public function load($name)
 	{
-		$file = $this->settings['grid_path'] . $name . '.php';
+		// Check if class already loaded
+		if ( ! class_exists( $name ) ){
+			$file = $this->settings['grid_path'] . $name . '.php';
 		
-		if(!is_file($file))
-		{
-			throw new jqGrid_Exception_Render($name . ' not found!');
+			if(!is_file($file))
+			{
+				throw new jqGrid_Exception_Render($name . ' not found!');
+			}
+		
+			require_once $file;
 		}
 		
-		require_once $file;
 		return new $name($this);
 	}
 
