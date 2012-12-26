@@ -36,7 +36,7 @@ class jqGridLoader
 		$this->settings['grid_path'] = $this->root_path . 'grids' . DIRECTORY_SEPARATOR;
 
 		#Load base grid class
-		require_once($this->root_path . 'jqGrid.php');
+		include_once($this->root_path . 'jqGrid.php');
 
 		#Register autoload
 		spl_autoload_register(array($this, 'autoload'));
