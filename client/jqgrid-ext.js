@@ -1,14 +1,10 @@
 //---------------
-// Overrride some defaults
+// Override some defaults
 //---------------
 
 $.extend($.jgrid.defaults,
 {
-	'datatype'	: 'json',
-	'mtype'		: 'POST',
-	'loadui'	: 'block',
-	
-	'loadComplete'	: function(data)
+	loadComplete : function(data)
 	{
 		$.jgrid.ext.errorHandler(data);
 	}
@@ -135,7 +131,24 @@ $.extend($.jgrid.edit,
 		return [true, null, new_id];
 	},
 	
-	recreateForm : true //recreating form removes a lot of butthurt of form editing
+	recreateForm : true
+});
+
+$.extend($.jgrid.del,
+{
+	afterSubmit: function(data)
+	{
+		var json = $.jgrid.parse(data.responseText);
+
+		if(typeof(json.error_msg) != 'undefined')
+		{
+			return [false, json.error_msg, 0];
+		}
+
+		return [true, null, 0];
+	},
+
+	recreateForm : true
 });
 
 //---------------

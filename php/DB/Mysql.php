@@ -6,74 +6,74 @@
 
 class jqGrid_DB_Mysql extends jqGrid_DB
 {
-	protected $db_type = 'mysql';
+    protected $db_type = 'mysql';
 
-	public function link()
-	{
-		static $link = null;
+    public function link()
+    {
+        static $link = null;
 
-		if(!$link)
-		{
-			$host = $this->loader->get('db_host');
-			$user = $this->loader->get('db_user');
-			$pass = $this->loader->get('db_pass');
-			$name = $this->loader->get('db_name');
+        if(!$link)
+        {
+            $host = $this->Loader->get('db_host');
+            $user = $this->Loader->get('db_user');
+            $pass = $this->Loader->get('db_pass');
+            $name = $this->Loader->get('db_name');
 
-			$link = mysql_connect($host, $user, $pass);
+            $link = mysql_connect($host, $user, $pass);
 
-			if(!$link)
-			{
-				$this->throwMysqlException();
-			}
+            if(!$link)
+            {
+                $this->throwMysqlException();
+            }
 
-			if(!mysql_select_db($name, $link))
-			{
-				$this->throwMysqlException();
-			}
-		}
+            if(!mysql_select_db($name, $link))
+            {
+                $this->throwMysqlException();
+            }
+        }
 
-		return $link;
-	}
+        return $link;
+    }
 
-	public function query($query)
-	{
-		$result = mysql_query($query, $this->link());
+    public function query($query)
+    {
+        $result = mysql_query($query, $this->link());
 
-		if(!$result)
-		{
-			$this->throwMysqlException($query);
-		}
+        if(!$result)
+        {
+            $this->throwMysqlException($query);
+        }
 
-		return $result;
-	}
+        return $result;
+    }
 
-	public function fetch($result)
-	{
-		return mysql_fetch_assoc($result);
-	}
+    public function fetch($result)
+    {
+        return mysql_fetch_assoc($result);
+    }
 
-	public function quote($val)
-	{
-		if(is_null($val))
-		{
-			return null;
-		}
+    public function quote($val)
+    {
+        if(is_null($val))
+        {
+            return null;
+        }
 
-		return "'" . mysql_real_escape_string($val, $this->link()) . "'";
-	}
+        return "'" . mysql_real_escape_string($val, $this->link()) . "'";
+    }
 
-	public function rowCount($result)
-	{
-		return mysql_affected_rows($this->link());
-	}
-	
-	public function lastInsertId()
-	{
-		return mysql_insert_id($this->link());
-	}
+    public function rowCount($result)
+    {
+        return mysql_affected_rows($this->link());
+    }
 
-	protected function throwMysqlException($query = null)
-	{
-		throw new jqGrid_Exception_DB(mysql_error(), array('query' => $query), mysql_errno());
-	}
+    public function lastInsertId()
+    {
+        return mysql_insert_id($this->link());
+    }
+
+    protected function throwMysqlException($query = null)
+    {
+        throw new jqGrid_Exception_DB(mysql_error(), array('query' => $query), mysql_errno());
+    }
 }

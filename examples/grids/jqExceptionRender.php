@@ -2,63 +2,63 @@
 
 class jqExceptionRender extends jqGrid
 {
-	protected function init()
-	{
-		#Set database table
-		$this->table = 'tbl_customer';
+    protected function init()
+    {
+        #Set database table
+        $this->table = 'tbl_customer';
 
-		#Make all columns editable by default
-		$this->cols_default = array('editable' => true);
+        #Make all columns editable by default
+        $this->cols_default = array('editable' => true);
 
-		#Set columns
-		$this->cols = array(
-			
-			'id'        =>array('label' => 'ID',
-								'width' => 10,
-								'align' => 'center',
-								'editable' => false, //id is non-editable
-								),
+        #Set columns
+        $this->cols = array(
 
-			'first_name'=>array('label' => 'First name',
-								'width'	=> 35,
-								'editrules' => array('required' => true),
-								'formoptions' => array('suffix' => 'gg'),
-								),
+            'id' => array('label' => 'ID',
+                'width' => 10,
+                'align' => 'center',
+                'editable' => false, //id is non-editable
+            ),
 
-			'last_name' =>array('label' => 'Last name',
-								'width' => 35,
-								'editrules' => array('required' => true),
-								),
+            'first_name' => array('label' => 'First name',
+                'width' => 35,
+                'editrules' => array('required' => true),
+                'formoptions' => array('suffix' => 'gg'),
+            ),
 
-			'email'     =>array('label' => 'Email',
-								'width' => 30,
-								'editrules' => array('email' => true),
-								),
+            'last_name' => array('label' => 'Last name',
+                'width' => 35,
+                'editrules' => array('required' => true),
+            ),
 
-			'phone'     =>array('label' => 'Phone',
-								'width'	=> 25,
-								'align' => 'center',
-								),
+            'email' => array('label' => 'Email',
+                'width' => 30,
+                'editrules' => array('email' => true),
+            ),
 
-			'discount'	=>array('label' => 'Discount',
-								'width'	=> 15,
-								'formatter' => 'numeric',
-								'align'	=> 'center',
-								'editable' => false,
-								),
-		);
+            'phone' => array('label' => 'Phone',
+                'width' => 25,
+                'align' => 'center',
+            ),
 
-		#Set nav
-		$this->nav = array('add' => true, 'edit' => false, 'del' => false);
-	}
-	
-	protected function renderComplete($data)
-	{
-		if(!isset($data['foo_bar']))
-		{
-			throw new jqGrid_Exception_Render('Not enough data to render grid');
-		}
-	
-		parent::renderComplete($data);
-	}
+            'discount' => array('label' => 'Discount',
+                'width' => 15,
+                'formatter' => 'numeric',
+                'align' => 'center',
+                'editable' => false,
+            ),
+        );
+
+        #Set nav
+        $this->nav = array('add' => true, 'edit' => false, 'del' => false);
+    }
+
+    protected function renderComplete($data)
+    {
+        if(!isset($data['foo_bar']))
+        {
+            throw new jqGrid_Exception_Render('Not enough data to render grid');
+        }
+
+        parent::renderComplete($data);
+    }
 }

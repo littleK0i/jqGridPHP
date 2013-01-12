@@ -18,7 +18,7 @@ $jq_loader->set('debug_output', true);
 
 if(isset($_SERVER['HTTP_HOST']) and $_SERVER['HTTP_HOST'] == 'jqgrid-php.net')
 {
-	$jq_loader->addInitQuery("SET NAMES 'utf8'");
+    $jq_loader->addInitQuery("SET NAMES 'utf8'");
 }
 
 $jq_loader->autorun();
@@ -41,12 +41,12 @@ $source_php = file_get_contents('grids/' . $grid . '.php');
 
 if(file_exists('grids/' . $grid . '2.php'))
 {
-	$source_php2 = file_get_contents('grids/' . $grid . '2.php');
+    $source_php2 = file_get_contents('grids/' . $grid . '2.php');
 }
 
 if(file_exists('grids/' . $grid . 'Details.php'))
 {
-	$source_php2 = file_get_contents('grids/' . $grid . 'Details.php');
+    $source_php2 = file_get_contents('grids/' . $grid . 'Details.php');
 }
 
 $source_tpl = file_get_contents('templates/' . $grid . '.php');

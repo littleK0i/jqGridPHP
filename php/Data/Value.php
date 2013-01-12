@@ -5,26 +5,26 @@
  */
 class jqGrid_Data_Value extends jqGrid_Data
 {
-	#Ensure 'array' input
-	public function __construct(array $data, $first = null)
-	{
-		if(!is_null($first))
-		{
-			$data = array('' => $first) + $data;
-		}
-		
-		parent::__construct($data);
-	}
+    #Ensure 'array' input
+    public function __construct(array $data, $first = null)
+    {
+        if(!is_null($first))
+        {
+            $data = array('' => $first) + $data;
+        }
 
-	public function __toString()
-	{
-		$base = array();
+        parent::__construct($data);
+    }
 
-		foreach($this->data as $k => $v)
-		{
-			$base[] = $k . ':' . $v;
-		}
+    public function __toString()
+    {
+        $base = array();
 
-		return '"' . implode(';', $base) . '"';
-	}
+        foreach($this->data as $k => $v)
+        {
+            $base[] = $k . ':' . $v;
+        }
+
+        return '"' . implode(';', $base) . '"';
+    }
 }

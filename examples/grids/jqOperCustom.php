@@ -2,43 +2,43 @@
 
 class jqOperCustom extends jqGrid
 {
-	protected function init()
-	{
-		$this->options = array('multiselect' => true,);
-		
-		$this->table = 'tbl_books';
+    protected function init()
+    {
+        $this->options = array('multiselect' => true,);
 
-		#Set columns
-		$this->cols = array(
-			'id'		=>array('label' => 'ID',
-								'width' => 10,
-								'align' => 'center',
-								'formatter' => 'integer',
-								),
+        $this->table = 'tbl_books';
 
-			'name'		=>array('label' => 'Name',
-								'width' => 40,
-								),
+        #Set columns
+        $this->cols = array(
+            'id' => array('label' => 'ID',
+                'width' => 10,
+                'align' => 'center',
+                'formatter' => 'integer',
+            ),
 
-			'price'		=>array('label' => 'Price',
-								'width' => 15,
-								'formatter' => 'integer',
-								),
-		);
-	}
+            'name' => array('label' => 'Name',
+                'width' => 40,
+            ),
 
-	protected function opPrice()
-	{
-		$price = intval($this->input('price'));
+            'price' => array('label' => 'Price',
+                'width' => 15,
+                'formatter' => 'integer',
+            ),
+        );
+    }
 
-		if($price < 1 or $price > 3000)
-		{
-			throw new jqGrid_Exception('Incorrect price!');
-		}
+    protected function opPrice()
+    {
+        $price = intval($this->input('price'));
 
-		foreach($this->input['id'] as $id)
-		{
-			$this->DB->update($this->table, array('price' => $price), intval($id));	
-		}
-	}
+        if($price < 1 or $price > 3000)
+        {
+            throw new jqGrid_Exception('Incorrect price!');
+        }
+
+        foreach($this->input['id'] as $id)
+        {
+            $this->DB->update($this->table, array('price' => $price), intval($id));
+        }
+    }
 }

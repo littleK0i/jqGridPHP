@@ -6,146 +6,146 @@
  */
 class jqGridExportExcelXml
 {
-	protected $loader;
-	protected $encoding;
-	
-	public function __construct(jqGridLoader $loader)
-	{
-		$this->loader = $loader;
-		$this->encoding = $this->loader->get('encoding');
+    protected $loader;
+    protected $encoding;
 
-		$this->xml = simplexml_load_string($this->getBaseXml());
-	}
+    public function __construct(jqGridLoader $loader)
+    {
+        $this->Loader = $loader;
+        $this->encoding = $this->Loader->get('encoding');
 
-	public function setData(array $cols, array $rows)
-	{
-		$col_count = 0;
-		$row_count = 0;
-		
-		//-------------
-		// Set creation time
-		//-------------
+        $this->xml = simplexml_load_string($this->getBaseXml());
+    }
 
-		$this->xml->DocumentProperties->Created = date('Y-m-d\TH:i:s\Z');
+    public function setData(array $cols, array $rows)
+    {
+        $col_count = 0;
+        $row_count = 0;
 
-		//-------------
-		// Set table
-		//-------------
+        //-------------
+        // Set creation time
+        //-------------
 
-		$tbl = $this->xml->Worksheet->Table;
-		
-		//-------------
-		// Columns
-		//-------------
+        $this->xml->DocumentProperties->Created = date('Y-m-d\TH:i:s\Z');
 
-		foreach($cols as $k => $c)
-		{
-			if($c['hidden'] or $c['unset'])
-			{
-				continue;
-			}
+        //-------------
+        // Set table
+        //-------------
 
-			$column = $tbl->addChild('Column');
-			$column['ss:AutoFitWidth'] = 1;
-			$column['ss:Width'] = $c['width'] * 2;
-			
-			$col_count++;
-		}
+        $tbl = $this->xml->Worksheet->Table;
 
-		//-------------
-		// Header row
-		//-------------
+        //-------------
+        // Columns
+        //-------------
 
-		$row = $tbl->addChild('Row');
-		$row_count++;
+        foreach($cols as $k => $c)
+        {
+            if($c['hidden'] or $c['unset'])
+            {
+                continue;
+            }
 
-		foreach($cols as $k => $c)
-		{
-			if($c['hidden'] or $c['unset'])
-			{
-				continue;
-			}
+            $column = $tbl->addChild('Column');
+            $column['ss:AutoFitWidth'] = 1;
+            $column['ss:Width'] = $c['width'] * 2;
 
-			$cell = $row->addChild('Cell');
-			$cell['ss:StyleID'] = 's22';
+            $col_count++;
+        }
 
-			$data = $cell->addChild('Data', $this->encode($c['name']));
-			$data['ss:Type'] = 'String';
-		}
+        //-------------
+        // Header row
+        //-------------
 
-		//-------------
-		// Rows
-		//-------------
+        $row = $tbl->addChild('Row');
+        $row_count++;
 
-		foreach($rows as &$r)
-		{
-			$i = -1; //cell index
-			$row = $tbl->addChild('Row');
+        foreach($cols as $k => $c)
+        {
+            if($c['hidden'] or $c['unset'])
+            {
+                continue;
+            }
 
-			foreach($cols as $k => $c)
-			{
-				if($c['unset']) continue;
+            $cell = $row->addChild('Cell');
+            $cell['ss:StyleID'] = 's22';
 
-				$i++;
+            $data = $cell->addChild('Data', $this->encode($c['name']));
+            $data['ss:Type'] = 'String';
+        }
 
-				if($c['hidden']) continue;
+        //-------------
+        // Rows
+        //-------------
 
-				$cell = $row->addChild('Cell');
-				$cell['ss:StyleID'] = 's23';
+        foreach($rows as &$r)
+        {
+            $i = -1; //cell index
+            $row = $tbl->addChild('Row');
 
-				$data = $cell->addChild('Data', $this->encode($r['cell'][$i]));
-				$data['ss:Type'] = is_numeric($r['cell'][$i]) ? 'Number' : 'String';
-			}
+            foreach($cols as $k => $c)
+            {
+                if($c['unset']) continue;
 
-			$row_count++;
-		}
+                $i++;
 
-		unset($r);
+                if($c['hidden']) continue;
 
-		//-------------
-		// Update table
-		//-------------
+                $cell = $row->addChild('Cell');
+                $cell['ss:StyleID'] = 's23';
 
-		$tbl['ss:ExpandedColumnCount'] = $col_count;
-		$tbl['ss:ExpandedRowCount'] = $row_count;
-	}
+                $data = $cell->addChild('Data', $this->encode($r['cell'][$i]));
+                $data['ss:Type'] = is_numeric($r['cell'][$i]) ? 'Number' : 'String';
+            }
 
-	public function output($filename='excel.xml', $path='')
-	{
-		header("Pragma: public");
-		header("Expires: 0");
-		header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-		header("Content-type: application/vnd.ms-excel");
+            $row_count++;
+        }
 
-		header("Content-Disposition: attachment; filename=$filename;");
-		header("Content-Transfer-Encoding: binary");
+        unset($r);
 
-		$path = $path ? $path : 'php://output';
-		$this->xml->asXml($path);
-	}
+        //-------------
+        // Update table
+        //-------------
 
-	protected function encode($val)
-	{
-		if(is_numeric($val))
-		{
-			return $val;
-		}
+        $tbl['ss:ExpandedColumnCount'] = $col_count;
+        $tbl['ss:ExpandedRowCount'] = $row_count;
+    }
 
-		$val = htmlspecialchars($val);
-		$val = str_replace("\n", '&#10;', $val);
+    public function output($filename = 'excel.xml', $path = '')
+    {
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Content-type: application/vnd.ms-excel");
 
-		if($this->encoding != 'utf-8')
-		{
-			$val = iconv($this->encoding, 'utf-8', $val);
-		}
+        header("Content-Disposition: attachment; filename=$filename;");
+        header("Content-Transfer-Encoding: binary");
 
-		return $val;
-	}
+        $path = $path ? $path : 'php://output';
+        $this->xml->asXml($path);
+    }
 
-	protected function getBaseXml()
-	{
-		return 
-<<<EOF
+    protected function encode($val)
+    {
+        if(is_numeric($val))
+        {
+            return $val;
+        }
+
+        $val = htmlspecialchars($val);
+        $val = str_replace("\n", '&#10;', $val);
+
+        if($this->encoding != 'utf-8')
+        {
+            $val = iconv($this->encoding, 'utf-8', $val);
+        }
+
+        return $val;
+    }
+
+    protected function getBaseXml()
+    {
+        return
+            <<<EOF
 <?xml version="1.0"?>
 <?mso-application progid="Excel.Sheet"?>
 <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
@@ -194,5 +194,5 @@ class jqGridExportExcelXml
  <x:ExcelWorkbook>  </x:ExcelWorkbook>
 </Workbook>
 EOF;
-	}
+    }
 }

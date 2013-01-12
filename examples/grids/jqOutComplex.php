@@ -2,10 +2,10 @@
 
 class jqOutComplex extends jqGrid
 {
-	protected function init()
-	{
-		#The complex query
-		$this->query = "
+    protected function init()
+    {
+        #The complex query
+        $this->query = "
 			SELECT {fields}
 			FROM (
 				SELECT
@@ -31,35 +31,35 @@ class jqOutComplex extends jqGrid
 			WHERE {where}
 		";
 
-		#Set columns
-		$this->cols = array(
-			
-			'id'        =>array('label' => 'ID',
-								'width' => 10,
-								'align' => 'center',
-								'formatter' => 'integer',
-								),
+        #Set columns
+        $this->cols = array(
 
-			'c_name'	=>array('label' => 'Name',
-								'db' => "CONCAT(first_name, ' ', SUBSTRING(last_name FROM 1 FOR 1))",
-								'width' => 35,
-								),
+            'id' => array('label' => 'ID',
+                'width' => 10,
+                'align' => 'center',
+                'formatter' => 'integer',
+            ),
 
-			'order_cnt' =>array('label' => 'Orders',
-								'width' => 10,
-								'formatter' => 'integer',
-								),
+            'c_name' => array('label' => 'Name',
+                'db' => "CONCAT(first_name, ' ', SUBSTRING(last_name FROM 1 FOR 1))",
+                'width' => 35,
+            ),
 
-			'items_sum'	=>array('label' => "Order sum",
-								'width' => 15,
-								'formatter' => 'integer',
-								),
+            'order_cnt' => array('label' => 'Orders',
+                'width' => 10,
+                'formatter' => 'integer',
+            ),
 
-			'order_max_delivery'
-						=>array('label' => 'Highest delivery',
-								'width' => 15,
-								'formatter' => 'integer',
-								),
-		);
-	}
+            'items_sum' => array('label' => "Order sum",
+                'width' => 15,
+                'formatter' => 'integer',
+            ),
+
+            'order_max_delivery'
+            => array('label' => 'Highest delivery',
+                'width' => 15,
+                'formatter' => 'integer',
+            ),
+        );
+    }
 }

@@ -14,10 +14,10 @@ class jqGrid_DB_Mssql extends jqGrid_DB
 
         if(!$link)
         {
-            $host = $this->loader->get('db_host');
-            $user = $this->loader->get('db_user');
-            $pass = $this->loader->get('db_pass');
-            $name = $this->loader->get('db_name');
+            $host = $this->Loader->get('db_host');
+            $user = $this->Loader->get('db_user');
+            $pass = $this->Loader->get('db_pass');
+            $name = $this->Loader->get('db_name');
 
             $link = mssql_connect($host, $user, $pass);
 
@@ -49,7 +49,7 @@ class jqGrid_DB_Mssql extends jqGrid_DB
 
     function mssql_escape_string($string)
     {
-		return str_replace("'", "''", $string);
+        return str_replace("'", "''", $string);
     }
 
     public function quote($val)
@@ -58,10 +58,10 @@ class jqGrid_DB_Mssql extends jqGrid_DB
         {
             return null;
         }
-		
+
         return "'" . str_replace("'", "''", $val) . "'";
     }
-	
+
     public function rowCount($result)
     {
         return mssql_rows_affected($this->link());

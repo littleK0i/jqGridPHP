@@ -2,23 +2,24 @@
 
 abstract class jqGrid_Export
 {
-	protected $loader;
+    /** @var $Loader jqGridLoader */
+    protected $Loader;
 
-	public $input;
-	public $grid_id;
+    public $input;
+    public $grid_id;
 
-	public $cols;
-	public $rows;
-	public $userdata;
+    public $cols;
+    public $rows;
+    public $userdata;
 
-	public $page;
-	public $total;
-	public $records;
+    public $page;
+    public $total;
+    public $records;
 
-	public function __construct(jqGridLoader $loader)
-	{
-		$this->loader = $loader;
-	}
+    public function __construct(jqGridLoader $loader)
+    {
+        $this->Loader = $loader;
+    }
 
-	abstract public function doExport();
+    abstract public function doExport();
 }

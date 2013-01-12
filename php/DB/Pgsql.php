@@ -6,55 +6,55 @@
 
 class jqGrid_DB_Pgsql extends jqGrid_DB
 {
-	protected $db_type = 'postgresql';
-	
-	public function link()
-	{
-		static $link = null;
+    protected $db_type = 'postgresql';
 
-		if(!$link)
-		{
-			$connect = $this->loader->get('db_pg_connect');
-			$link = pg_connect($connect);
+    public function link()
+    {
+        static $link = null;
 
-			if(!$link)
-			{
-				throw new jqGrid_Exception_DB(pg_last_error());
-			}
-		}
+        if(!$link)
+        {
+            $connect = $this->Loader->get('db_pg_connect');
+            $link = pg_connect($connect);
 
-		return $link;
-	}
+            if(!$link)
+            {
+                throw new jqGrid_Exception_DB(pg_last_error());
+            }
+        }
 
-	public function query($query)
-	{
-		$result = pg_query($this->link(), $query);
+        return $link;
+    }
 
-		if(!$result)
-		{
-			throw new jqGrid_Exception_DB(pg_last_error(), array('query' => $query));
-		}
+    public function query($query)
+    {
+        $result = pg_query($this->link(), $query);
 
-		return $result;
-	}
+        if(!$result)
+        {
+            throw new jqGrid_Exception_DB(pg_last_error(), array('query' => $query));
+        }
 
-	public function fetch($result)
-	{
-		return pg_fetch_assoc($result);
-	}
+        return $result;
+    }
 
-	public function quote($val)
-	{
-		if(is_null($val))
-		{
-			return $val;
-		}
+    public function fetch($result)
+    {
+        return pg_fetch_assoc($result);
+    }
 
-		return "'" . pg_escape_string($this->link(), $val) . "'";
-	}
+    public function quote($val)
+    {
+        if(is_null($val))
+        {
+            return $val;
+        }
 
-	public function rowCount($result)
-	{
-		return pg_affected_rows($result);
-	}
+        return "'" . pg_escape_string($this->link(), $val) . "'";
+    }
+
+    public function rowCount($result)
+    {
+        return pg_affected_rows($result);
+    }
 }
