@@ -26,7 +26,7 @@ abstract class jqGrid
 
     protected $where = array();
     protected $where_glue = ' AND ';
-    protected $where_empty = 'true';
+    protected $where_empty = ' true ';
 
     protected $table;
     protected $query;
