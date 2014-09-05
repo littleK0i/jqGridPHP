@@ -736,7 +736,7 @@ abstract class jqGrid
      */
     protected function buildWhere($where, $glue, $type)
     {
-        return $where ? implode($glue, $where) : $this->where_empty;
+        return ($where ? implode($glue, $where) : $this->where_empty) . "\n";
     }
 
     /**
