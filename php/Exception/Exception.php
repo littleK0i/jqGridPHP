@@ -9,7 +9,7 @@ class jqGrid_Exception extends Exception
     public function __construct($message, $data = null, $code = 0)
     {
         $this->data = $data;
-        return parent::__construct($message, $code);
+        return parent::__construct($message, intval($code), NULL);
     }
 
     public function getData()
