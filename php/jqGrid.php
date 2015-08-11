@@ -68,7 +68,6 @@ abstract class jqGrid
             'unset' => false,
             'replace' => null,
             'formatter' => null,
-            'manual' => false,
             'hidden' => false,
             'editable' => false,
             'search' => true,
@@ -135,26 +134,31 @@ abstract class jqGrid
         $this->afterInit();
 
         //----------------
-        // Primary key
-        //----------------
-
-        reset($this->cols);
-        $this->primary_key = $this->primary_key ? (array)$this->primary_key : array(key($this->cols));
-
-        if(is_null($this->primary_key_auto_increment))
-        {
-            $this->primary_key_auto_increment = count($this->primary_key) == 1;
-        }
-
-        //----------------
         // Prepare columns
         //----------------
-
         $this->reserved_col_names = $this->getReservedColNames();
 
         foreach($this->cols as $k => &$c)
         {
             $c = $this->initColumn($k, $c);
+        }
+
+        //----------------
+        // Primary key
+        //----------------
+        if ($this->primary_key) {
+            $this->primary_key = (array)$this->primary_key;
+        } else {
+            foreach ($this->cols as $k => $v) {
+                if ($v['db'] === false) { continue; }
+                $this->primary_key = array($k);
+                break;
+            }
+        }
+
+        if(is_null($this->primary_key_auto_increment))
+        {
+            $this->primary_key_auto_increment = count($this->primary_key) == 1;
         }
     }
 
@@ -638,7 +642,7 @@ abstract class jqGrid
 
         foreach($cols as $k => &$c)
         {
-            if($c['manual']) continue;
+            if ($c['db'] === false) { continue; }
 
             $fields[] = ($k == $c['db']) ? $c['db'] : ($c['db'] . ' AS ' . $k);
         }
@@ -906,11 +910,17 @@ abstract class jqGrid
         #Label = column key if not set
         if(!isset($c['label'])) $c['label'] = $k;
 
+        #DB = column key if not set
+        if (array_key_exists('db', $c)) {
+            $c['db'] = ($c['db'] ? $c['db'] : false);
+        } elseif (isset($c['manual']) && $c['manual'] === true ) {
+            $c['db'] = false;
+        } else {
+            $c['db'] = $k;
+        }
+
         #Merge with defaults
         $c = array_merge($this->default['cols'], $this->cols_default, $c);
-
-        #DB = column key if not set
-        $c['db'] = $c['db'] ? $c['db'] : $k;
 
         return $c;
     }

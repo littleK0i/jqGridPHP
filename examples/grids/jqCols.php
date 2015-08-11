@@ -73,7 +73,7 @@ class jqCols extends jqGrid
 
             #This column is processed MANUALLY in PHP code
             'diff_price' => array('label' => 'Diff',
-                'manual' => true,
+                'db' => false,
                 'width' => 12,
                 'search' => false,
                 'sortable' => false,

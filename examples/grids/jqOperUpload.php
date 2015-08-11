@@ -21,7 +21,7 @@ class jqOperUpload extends jqGrid
 
             'image' => array('label' => 'Image',
                 'width' => 14,
-                'manual' => true, //manually create images in PHP
+                'db' => false, //manually create images in PHP
                 //you can use JS formatter instead
                 'encode' => false,
                 'sortable' => false,
@@ -52,7 +52,7 @@ class jqOperUpload extends jqGrid
 
             #Hidden column for uploading
             'upload' => array('label' => 'Upload image',
-                'manual' => true,
+                'db' => false,
                 'hidden' => true,
                 'editable' => true,
                 'edittype' => 'file',
