@@ -40,7 +40,7 @@ abstract class jqGrid_Adapter_CSV extends jqGrid
         #Preserve column order!
         foreach($this->cols as $k => $c)
         {
-            if(!$c['manual'] and $k != $this->primary_key[0])
+            if($c['db'] && $k != $this->primary_key[0])
             {
                 $new_row[$k] = isset($ins[$k]) ? $ins[$k] : null;
             }
