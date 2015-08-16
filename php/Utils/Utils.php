@@ -30,6 +30,10 @@ class jqGrid_Utils
                 $a = str_replace(",", ".", strval($a));
             }
 
+            if (is_string($a) && substr($a, 0, 4) === '<?js' && substr($a, -2, 2) === '?>')
+            {
+                return substr($a, 5, -2);
+            }
             return '"' . str_replace($jsonReplaces[0], $jsonReplaces[1], $a) . '"';
         }
 

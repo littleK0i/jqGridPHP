@@ -86,6 +86,21 @@ abstract class jqGrid
             'refresh' => true,
             'search' => false,
             'view' => false,
+            //---------------
+            // Form edit error handler
+            //---------------
+            'prmAdd' => array(
+                'recreateForm'  => true,
+                'afterSubmit' => "<?js \$.jgrid.ext.afterSubmit ?>"
+            ),
+            'prmEdit' => array(
+                'recreateForm'  => true,
+                'afterSubmit' => "<?js \$.jgrid.ext.afterSubmit ?>"
+            ),
+            'prmDel' => array(
+                'recreateForm'  => true,
+                'afterSubmit' => "<?js \$.jgrid.ext.afterSubmit ?>"
+            ),
         ),
 
         'options' => array(
@@ -1230,17 +1245,18 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
             #Respect the argument order
             foreach($nav_special as $k)
             {
+                $code .= ",\n /*{$k}:*/ ";
                 if(isset($data['nav'][$k]))
                 {
-                    $code .= ', ' . jqGrid_Utils::jsonEncode($data['nav'][$k]);
+                    $code .= jqGrid_Utils::jsonEncode($data['nav'][$k]);
                 }
                 else
                 {
-                    $code .= ', null';
+                    $code .= 'null';
                 }
             }
 
-            $code .= ");\n";
+            $code .= "\n);\n";
 
             #Excel button
             if(isset($data['nav']['excel']) and $data['nav']['excel'])
