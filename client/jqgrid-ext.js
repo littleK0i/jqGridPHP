@@ -57,7 +57,18 @@ $.jgrid.ext =
 				$(this).attr('name', $(this).data('name'));
 			});
 		}, 200);
-	}
+	},
+    //---------------
+    // Used by form edit error handler
+    //---------------
+    afterSubmit: function(data) {
+        var json = $.jgrid.parse(data.responseText);
+        if(typeof(json.error_msg) != 'undefined') {
+            return [false, json.error_msg, 0];
+        }
+        var new_id = json.new_id || 0;
+        return [true, null, new_id];
+    }
 };
 
 //---------------
@@ -110,45 +121,6 @@ $.extend($.fn.fmatter,
 		
 		return $.jgrid.format('<a href="{0}" class="{1}" target="{2}">{3}</a>', href, opt['class'], opt['target'], cellvalue);
 	}
-});
-
-//---------------
-// Form edit error handler
-//---------------
-
-$.extend($.jgrid.edit,
-{
-	afterSubmit: function(data)
-	{
-		var json = $.jgrid.parse(data.responseText);
-		var new_id = json.new_id || 0;
-		
-		if(typeof(json.error_msg) != 'undefined')
-		{
-			return [false, json.error_msg, new_id];
-		}
-		
-		return [true, null, new_id];
-	},
-	
-	recreateForm : true
-});
-
-$.extend($.jgrid.del,
-{
-	afterSubmit: function(data)
-	{
-		var json = $.jgrid.parse(data.responseText);
-
-		if(typeof(json.error_msg) != 'undefined')
-		{
-			return [false, json.error_msg, 0];
-		}
-
-		return [true, null, 0];
-	},
-
-	recreateForm : true
 });
 
 //---------------
