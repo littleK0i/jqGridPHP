@@ -331,28 +331,35 @@ $.jgrid.extend(
 	{
 		return this.each(function(type)
 		{
-			$grid = $(this);
+			var $grid = $(this);
 			
 			var url  = $grid.jqGrid('getGridParam', 'url');
 			var postData = $grid.jqGrid('getGridParam', 'postData');
 			
 			var $frame = $('<iframe src="' + url + '&' + $.param($.extend(null, postData, {'_out' : 'export'}, data)) + '" style="display:none;"></iframe>');
 			
-			$frame.load(function()
+			var _inter = null;
+			var _successFn = function()
 			{
+				window.clearInterval(_inter);
+				_inter = null;
 				if($.isFunction(success))
 				{
 					success.call($grid);
 				}
 				
 				$grid.jqGrid('extLoading', false);
-			});
-			
-			if(!$.browser.msie && !$.browser.opera)
-			{
-				$grid.jqGrid('extLoading', true);
-			}
-			
+			};
+
+			$frame.load(_successFn); // FF, Chrome, ...
+			_inter = window.setInterval( function() { // IE-Edge, Safari
+				if ($('head', $frame.contents())) {
+					_successFn();
+				}
+			}, 500);
+
+			$grid.jqGrid('extLoading', true);
+
 			$('html').append($frame);
 		});
 	},
