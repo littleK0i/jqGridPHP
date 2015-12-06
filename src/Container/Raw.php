@@ -1,6 +1,8 @@
 <?php
 
-class jqGrid_Data_Raw extends jqGrid_Data
+namespace jqGridPHP\Container;
+
+class Raw extends AbstractContainer
 {
     public function __toString()
     {

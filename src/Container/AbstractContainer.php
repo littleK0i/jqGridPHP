@@ -3,7 +3,10 @@
  * Special data structures for jqGrid
  * Uncommon serialization
  */
-abstract class jqGrid_Data
+
+namespace jqGridPHP\Container;
+
+abstract class AbstractContainer
 {
     protected $data;
 

@@ -1,6 +1,8 @@
 <?php
 
-class jqGrid_Exception extends Exception
+namespace jqGridPHP;
+
+class jqException extends \Exception
 {
     protected $data;
     protected $exception_type = 'common';

@@ -1,6 +1,7 @@
 <?php
+namespace jqGridPHP;
 
-class jqGrid_Utils
+class Utils
 {
     /**
      * Supports any encoding

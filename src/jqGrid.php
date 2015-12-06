@@ -1,9 +1,12 @@
 <?php
 
+namespace jqGridPHP;
+
 abstract class jqGrid
 {
     /** @var $DB jqGrid_DB */
     protected $DB;
+    protected $db_config = 'default';
 
     /** @var $Loader jqGridLoader */
     protected $Loader;
@@ -114,7 +117,7 @@ abstract class jqGrid
      *
      * @param jqGridLoader $loader
      */
-    public function __construct(jqGridLoader $loader)
+    public function __construct()
     {
         //------------------
         // Globals
@@ -141,8 +144,7 @@ abstract class jqGrid
         reset($this->cols);
         $this->primary_key = $this->primary_key ? (array)$this->primary_key : array(key($this->cols));
 
-        if(is_null($this->primary_key_auto_increment))
-        {
+        if (is_null($this->primary_key_auto_increment)) {
             $this->primary_key_auto_increment = count($this->primary_key) == 1;
         }
 
@@ -152,8 +154,7 @@ abstract class jqGrid
 
         $this->reserved_col_names = $this->getReservedColNames();
 
-        foreach($this->cols as $k => &$c)
-        {
+        foreach ($this->cols as $k => &$c) {
             $c = $this->initColumn($k, $c);
         }
     }
@@ -164,7 +165,7 @@ abstract class jqGrid
      * @abstract
      * @return void
      */
-    abstract protected function init();
+    abstract public function init();
 
     /**
      * MAIN ACTION (1): Output data
@@ -172,7 +173,7 @@ abstract class jqGrid
      * @throws jqGrid_Exception
      * @return void
      */
-    public function output()
+    public function actOutput()
     {
         //----------------
         // Setup essential vars
@@ -184,13 +185,11 @@ abstract class jqGrid
         // Input to search
         //----------------
 
-        if($this->do_search)
-        {
+        if ($this->do_search) {
             $this->search();
         }
 
-        if($this->do_search_advanced)
-        {
+        if ($this->do_search_advanced) {
             $this->searchAdvanced();
         }
 
@@ -198,8 +197,7 @@ abstract class jqGrid
         // Try to guess the basic query
         //----------------
 
-        if(!$this->query)
-        {
+        if (!$this->query) {
             $this->query = $this->getDefaultQuery();
         }
 
@@ -207,8 +205,7 @@ abstract class jqGrid
         // Get agg data
         //----------------
 
-        if($this->do_agg)
-        {
+        if ($this->do_agg) {
             $this->getDataAgg();
         }
 
@@ -228,8 +225,7 @@ abstract class jqGrid
         // Set count automatically
         //----------------
 
-        if(is_null($this->count))
-        {
+        if (is_null($this->count)) {
             $this->setRowCount();
         }
 
@@ -239,8 +235,7 @@ abstract class jqGrid
 
         $callback = array($this, jqGrid_Utils::uscore2camel('out', $this->out));
 
-        if(!is_callable($callback))
-        {
+        if (!is_callable($callback)) {
             throw new jqGrid_Exception("Output type '{$this->out}' is not defined");
         }
 
@@ -253,13 +248,12 @@ abstract class jqGrid
      * @param $oper - operation name
      * @return void
      */
-    public function oper($oper)
+    public function actOper($oper)
     {
         $id = $this->input('_id');
         $oper = strval($oper);
 
-        switch($oper)
-        {
+        switch ($oper) {
             case 'add':
                 $data = array_intersect_key($this->input, $this->cols);
                 $data = $this->operData($data);
@@ -267,8 +261,7 @@ abstract class jqGrid
                 $id = $this->opAdd($data);
 
                 #Not auto increment -> build new_id from data
-                if(empty($this->primary_key_auto_increment))
-                {
+                if (empty($this->primary_key_auto_increment)) {
                     $id = $this->implodePrimaryKey($data);
                 }
 
@@ -293,12 +286,9 @@ abstract class jqGrid
             default:
                 $callback = array($this, jqGrid_Utils::uscore2camel('op', $oper));
 
-                if(is_callable($callback))
-                {
+                if (is_callable($callback)) {
                     call_user_func($callback);
-                }
-                else
-                {
+                } else {
                     throw new jqGrid_Exception("Oper $oper is not defined");
                 }
                 break;
@@ -323,10 +313,9 @@ abstract class jqGrid
      * @param array $render_data
      * @return string
      */
-    public function render($render_data = array())
+    public function actRender($render_data = array())
     {
-        if(!is_array($render_data))
-        {
+        if (!is_array($render_data)) {
             throw new jqGrid_Exception_Render('Render data must be an array');
         }
 
@@ -352,9 +341,8 @@ abstract class jqGrid
         // Render colModel
         //-----------------
 
-        foreach($this->cols as $k => $c)
-        {
-            if(isset($c['unset']) and $c['unset']) continue;
+        foreach ($this->cols as $k => $c) {
+            if (isset($c['unset']) and $c['unset']) continue;
 
             #Remove internal column properties
             $c = array_diff_key($c, array_flip($this->internal_col_prop));
@@ -375,8 +363,7 @@ abstract class jqGrid
         $options['url'] = $options['editurl'] = $options['cellurl'] = $this->renderGridUrl();
 
         #Any postData?
-        if($post_data = $this->renderPostData())
-        {
+        if ($post_data = $this->renderPostData()) {
             $options['postData'] = $post_data;
         }
 
@@ -386,8 +373,7 @@ abstract class jqGrid
         // Render navigator
         //-----------------
 
-        if(is_array($this->nav))
-        {
+        if (is_array($this->nav)) {
             $data['nav'] = $this->renderNav(array_merge($this->default['nav'], $this->nav));
         }
 
@@ -411,41 +397,18 @@ abstract class jqGrid
      * @param jqGrid_Exception $e
      * @return mixed
      */
-    public function catchException(jqGrid_Exception $e)
+    public function outputException(jqException $e)
     {
-        #More output types will be added
-        switch($e->getOutputType())
-        {
-            case 'json':
-                $r = array(
-                    'error' => 1,
-                    'error_msg' => $e->getMessage(),
-                    'error_code' => $e->getCode(),
-                    'error_data' => $e->getData(),
-                    'error_type' => $e->getExceptionType(),
-                );
+        $r = array(
+            'error' => 1,
+            'error_msg' => $e->getMessage(),
+            'error_code' => $e->getCode(),
+            'error_data' => $e->getData(),
+            'error_file' => $e->getFile(),
+            'error_line' => $e->getLine(),
+        );
 
-                if($this->Loader->get('debug_output'))
-                {
-                    $r['error_string'] = (string)$e;
-                }
-                else
-                {
-                    if($e instanceof jqGrid_Exception_DB)
-                    {
-                        unset($r['error_data']['query']);
-                    }
-                }
-
-                $this->json($r);
-                break;
-
-            case 'trigger_error':
-                trigger_error($e->getMessage(), E_USER_ERROR);
-                break;
-        }
-
-        return $e;
+        $this->json($r);
     }
 
     /**
@@ -467,10 +430,9 @@ abstract class jqGrid
         // Fill cells
         //----------------
 
-        foreach($this->cols as $k => $c)
-        {
+        foreach ($this->cols as $k => $c) {
             #Discard this column in output?
-            if($c['unset']) continue;
+            if ($c['unset']) continue;
 
             #Parse each cell
             $cell[] = $this->addRowCell($c, $row);
@@ -494,13 +456,13 @@ abstract class jqGrid
         $val = isset($row[$c['name']]) ? $row[$c['name']] : null;
 
         #Handle nulls
-        if($val === null and $c['null'] !== null) $val = $c['null'];
+        if ($val === null and $c['null'] !== null) $val = $c['null'];
 
         #Easy replace values
-        if($c['replace']) $val = isset($c['replace'][$val]) ? $c['replace'][$val] : $val;
+        if ($c['replace']) $val = isset($c['replace'][$val]) ? $c['replace'][$val] : $val;
 
         #Encode before output
-        if($c['encode']) $val = $this->outputEncodeValue($c, $val);
+        if ($c['encode']) $val = $this->outputEncodeValue($c, $val);
 
         return $val;
     }
@@ -519,8 +481,7 @@ abstract class jqGrid
         // TreeGrid handling
         //----------------
 
-        if($this->treegrid == 'adjacency')
-        {
+        if ($this->treegrid == 'adjacency') {
             $cell[] = $row['level'];
             $cell[] = $row['parent'];
             $cell[] = $row['isLeaf'];
@@ -528,8 +489,7 @@ abstract class jqGrid
             $cell[] = isset($row['loaded']) ? $row['loaded'] : false;
         }
 
-        if($this->treegrid == 'nested')
-        {
+        if ($this->treegrid == 'nested') {
             $cell[] = $row['level'];
             $cell[] = $row['lft'];
             $cell[] = $row['rgt'];
@@ -542,10 +502,8 @@ abstract class jqGrid
         // Send all the vars beginning with '_' to userdata!
         //----------------
 
-        foreach($row as $k => $v)
-        {
-            if(strpos($k, '_') === 0)
-            {
+        foreach ($row as $k => $v) {
+            if (strpos($k, '_') === 0) {
                 $this->userdata[$k][$id] = $v;
             }
         }
@@ -620,8 +578,8 @@ abstract class jqGrid
         // ORDER BY, LIMIT, OFFSET
         //-----------------
 
-        if($this->do_sort) $q .= $this->buildOrderBy($this->sidx, $this->sord) . "\n";
-        if($this->do_limit) $q .= $this->buildLimitOffset($this->limit, $this->page) . "\n";
+        if ($this->do_sort) $q .= $this->buildOrderBy($this->sidx, $this->sord) . "\n";
+        if ($this->do_limit) $q .= $this->buildLimitOffset($this->limit, $this->page) . "\n";
 
         return $q;
     }
@@ -636,9 +594,8 @@ abstract class jqGrid
     {
         $fields = array();
 
-        foreach($cols as $k => &$c)
-        {
-            if($c['manual']) continue;
+        foreach ($cols as $k => &$c) {
+            if ($c['manual']) continue;
 
             $fields[] = ($k == $c['db']) ? $c['db'] : ($c['db'] . ' AS ' . $k);
         }
@@ -657,12 +614,10 @@ abstract class jqGrid
         #Count should always be here!
         $fields = array('count(*) AS _count');
 
-        foreach($cols as $k => $c)
-        {
-            if(!$c['db_agg']) continue;
+        foreach ($cols as $k => $c) {
+            if (!$c['db_agg']) continue;
 
-            switch($c['db_agg'])
-            {
+            switch ($c['db_agg']) {
                 #Common
                 case 'sum':
                 case 'avg':
@@ -697,8 +652,7 @@ abstract class jqGrid
         $limit = intval($limit);
         $page = intval($page);
 
-        if($limit > 0 and $page > 0)
-        {
+        if ($limit > 0 and $page > 0) {
             $offset = ($page * $limit) - $limit;
             return "LIMIT $limit OFFSET $offset";
         }
@@ -718,8 +672,7 @@ abstract class jqGrid
      */
     protected function buildOrderBy($sidx, $sord)
     {
-        if($sidx and $sord)
-        {
+        if ($sidx and $sord) {
             return "ORDER BY $sidx $sord";
         }
 
@@ -746,8 +699,7 @@ abstract class jqGrid
      */
     protected function getDefaultQuery()
     {
-        if(empty($this->table))
-        {
+        if (empty($this->table)) {
             return '';
         }
 
@@ -794,8 +746,7 @@ abstract class jqGrid
         $query = $this->buildQueryRows($this->query);
         $result = $this->DB->query($query);
 
-        while($r = $this->DB->fetch($result))
-        {
+        while ($r = $this->DB->fetch($result)) {
             $this->addRow($r);
         }
 
@@ -810,8 +761,7 @@ abstract class jqGrid
      */
     protected function getDataUser($userdata)
     {
-        if($this->agg)
-        {
+        if ($this->agg) {
             $userdata['agg'] = $this->agg;
         }
 
@@ -820,21 +770,11 @@ abstract class jqGrid
 
 
     /**
-     * It is the ONLY entry-point for external data
-     *
      * @return array
      */
     protected function getInput()
     {
-        $req = array_merge($_GET, $_POST);
-
-        #Ajax input is always utf-8 -> convert it
-        if($this->Loader->get('encoding') != 'utf-8' and isset($_SERVER['HTTP_X_REQUESTED_WITH']))
-        {
-            $req = jqGrid_Utils::arrayIconv($req, 'utf-8', $this->Loader->get('encoding'));
-        }
-
-        return $req;
+        return array_merge($_GET, $_POST);
     }
 
     /**
@@ -846,13 +786,11 @@ abstract class jqGrid
     {
         $names = $this->default['reserved_col_names'];
 
-        if($this->treegrid == 'adjacency')
-        {
+        if ($this->treegrid == 'adjacency') {
             $names = array_merge($names, array('parent', 'level', 'isLeaf', 'expanded', 'loaded'));
         }
 
-        if($this->treegrid == 'nested')
-        {
+        if ($this->treegrid == 'nested') {
             $names = array_merge($names, array('level', 'lft', 'rgt', 'isLeaf', 'expanded', 'loaded'));
         }
 
@@ -869,8 +807,7 @@ abstract class jqGrid
     {
         $where = array();
 
-        foreach($this->explodePrimaryKey($primary_key) as $k => $v)
-        {
+        foreach ($this->explodePrimaryKey($primary_key) as $k => $v) {
             $where[] = "$k = " . $this->DB->quote($v);
         }
 
@@ -889,13 +826,11 @@ abstract class jqGrid
     protected function initColumn($k, $c)
     {
         #Check reserved keys
-        if(in_array($k, $this->reserved_col_names))
-        {
+        if (in_array($k, $this->reserved_col_names)) {
             throw new jqGrid_Exception("Column name '$k' reserved for internal usage!");
         }
 
-        if(strpos($k, '_') === 0)
-        {
+        if (strpos($k, '_') === 0) {
             throw new jqGrid_Exception("Column name '$k' must NOT begin with underscore!");
         }
 
@@ -904,7 +839,7 @@ abstract class jqGrid
         $c['index'] = $k;
 
         #Label = column key if not set
-        if(!isset($c['label'])) $c['label'] = $k;
+        if (!isset($c['label'])) $c['label'] = $k;
 
         #Merge with defaults
         $c = array_merge($this->default['cols'], $this->cols_default, $c);
@@ -929,8 +864,7 @@ abstract class jqGrid
      */
     protected function opAdd($ins)
     {
-        if(empty($this->table))
-        {
+        if (empty($this->table)) {
             throw new jqGrid_Exception('Table is not defined');
         }
 
@@ -946,8 +880,7 @@ abstract class jqGrid
      */
     protected function opEdit($id, $upd)
     {
-        if(empty($this->table))
-        {
+        if (empty($this->table)) {
             throw new jqGrid_Exception('Table is not defined');
         }
 
@@ -962,19 +895,16 @@ abstract class jqGrid
      */
     protected function opDel($id)
     {
-        if(empty($this->table))
-        {
+        if (empty($this->table)) {
             throw new jqGrid_Exception('Table is not defined');
         }
 
         $where = array();
 
-        foreach(explode(',', $id) as $pk)
-        {
+        foreach (explode(',', $id) as $pk) {
             $wh = array();
 
-            foreach($this->explodePrimaryKey($pk) as $kk => $vv)
-            {
+            foreach ($this->explodePrimaryKey($pk) as $kk => $vv) {
                 $wh[] = "$kk = " . $this->DB->quote($vv);
             }
 
@@ -1041,8 +971,7 @@ abstract class jqGrid
             'userdata' => $this->userdata,
         );
 
-        if($this->Loader->get('debug_output'))
-        {
+        if ($this->Loader->get('debug_output')) {
             $data['debug'] = $this->debug;
         }
 
@@ -1066,8 +995,7 @@ abstract class jqGrid
 
         $class = 'jqGrid_Export_' . ucfirst($type);
 
-        if(!class_exists($class))
-        {
+        if (!class_exists($class)) {
             throw new jqGrid_Exception("Export type $type does not exist");
         }
 
@@ -1123,8 +1051,7 @@ abstract class jqGrid
      */
     protected function renderGridSuffix($render_data)
     {
-        if(isset($this->render_suffix_col) and isset($render_data[$this->render_suffix_col]))
-        {
+        if (isset($this->render_suffix_col) and isset($render_data[$this->render_suffix_col])) {
             return jqGrid_Utils::checkAlphanum($render_data[$this->render_suffix_col]);
         }
 
@@ -1140,8 +1067,7 @@ abstract class jqGrid
     {
         $params[$this->Loader->get('input_grid')] = $this->grid_id;
 
-        foreach($this->render_data as $k => $v)
-        {
+        foreach ($this->render_data as $k => $v) {
             $params[$k] = $v;
         }
 
@@ -1222,20 +1148,15 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
         $code .= "\$grid.jqGrid('extBindEvents');\n";
 
         #NavGrid
-        if(isset($data['nav']))
-        {
+        if (isset($data['nav'])) {
             $nav_special = array('prmEdit', 'prmAdd', 'prmDel', 'prmSearch', 'prmView');
             $code .= "\$grid.jqGrid('navGrid', pager, " . jqGrid_Utils::jsonEncode(array_diff_key($data['nav'], array_flip($nav_special)));
 
             #Respect the argument order
-            foreach($nav_special as $k)
-            {
-                if(isset($data['nav'][$k]))
-                {
+            foreach ($nav_special as $k) {
+                if (isset($data['nav'][$k])) {
                     $code .= ', ' . jqGrid_Utils::jsonEncode($data['nav'][$k]);
-                }
-                else
-                {
+                } else {
                     $code .= ', null';
                 }
             }
@@ -1243,15 +1164,13 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
             $code .= ");\n";
 
             #Excel button
-            if(isset($data['nav']['excel']) and $data['nav']['excel'])
-            {
+            if (isset($data['nav']['excel']) and $data['nav']['excel']) {
                 $code .= "\$grid.jqGrid('navButtonAdd', pager, {caption: '{$data['nav']['exceltext']}', title: '{$data['nav']['exceltext']}', icon: 'ui-extlink', onClickButton: function(){ \$(this).jqGrid('extExport', {'export' : 'ExcelHtml', 'rows': -1}); }});\n";
             }
         }
 
         #Filter toolbar
-        if($this->render_filter_toolbar)
-        {
+        if ($this->render_filter_toolbar) {
             $code .= "\$grid.jqGrid('filterToolbar');\n";
         }
 
@@ -1270,26 +1189,20 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
      */
     protected function search()
     {
-        foreach($this->cols as $k => $c)
-        {
-            if(!isset($this->input[$k]) or $this->input[$k] === '')
-            {
+        foreach ($this->cols as $k => $c) {
+            if (!isset($this->input[$k]) or $this->input[$k] === '') {
                 continue;
             }
 
             #Preserve original input value
             $val = $this->input[$k];
 
-            if(is_array($val))
-            {
-                foreach($val as $kk => $vv)
-                {
+            if (is_array($val)) {
+                foreach ($val as $kk => $vv) {
                     jqGrid_Utils::checkAlphanum($kk);
                     $val[$kk] = $this->searchCleanVal($vv);
                 }
-            }
-            else
-            {
+            } else {
                 $val = $this->searchCleanVal($val);
             }
 
@@ -1299,13 +1212,12 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
 
             $callback = array($this, jqGrid_Utils::uscore2camel('searchOp', $c['search_op']));
 
-            if(!is_callable($callback))
-            {
+            if (!is_callable($callback)) {
                 throw new jqGrid_Exception('Search operation ' . $c['search_op'] . ' is not defined');
             }
 
             $wh = call_user_func($callback, $c, $val);
-            if($wh) $this->where[] = $wh;
+            if ($wh) $this->where[] = $wh;
         }
     }
 
@@ -1319,15 +1231,13 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
     {
         $filters = $this->input('filters');
 
-        if(empty($filters))
-        {
+        if (empty($filters)) {
             return;
         }
 
         $filters = json_decode($filters, true);
 
-        if(empty($filters))
-        {
+        if (empty($filters)) {
             return;
         }
 
@@ -1375,10 +1285,8 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
         // Process rules
         //------------
 
-        foreach($row['rules'] as $r)
-        {
-            if(!array_key_exists($r['field'], $this->cols))
-            {
+        foreach ($row['rules'] as $r) {
+            if (!array_key_exists($r['field'], $this->cols)) {
                 continue;
             }
 
@@ -1390,8 +1298,7 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
             // Empty data? Skip this rule!
             //-------------
 
-            if(empty($data) and !in_array($op, array('nu', 'nn')))
-            {
+            if (empty($data) and !in_array($op, array('nu', 'nn'))) {
                 continue;
             }
 
@@ -1399,12 +1306,10 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
             // Customer search op
             //-------------
 
-            if($c['search_op'] and $c['search_op'] != 'auto')
-            {
+            if ($c['search_op'] and $c['search_op'] != 'auto') {
                 $callback = array($this, jqGrid_Utils::uscore2camel('searchOp', $c['search_op']));
 
-                if(!is_callable($callback))
-                {
+                if (!is_callable($callback)) {
                     throw new jqGrid_Exception('Search operation ' . $c['search_op'] . ' is not defined');
                 }
 
@@ -1417,18 +1322,12 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
             // Common search op's
             //-------------
 
-            if(array_key_exists($op, $basic_ops))
-            {
+            if (array_key_exists($op, $basic_ops)) {
                 $wh[] = $c['db'] . ' ' . $basic_ops[$op] . " '$data'";
-            }
-            elseif(array_key_exists($op, $like_ops))
-            {
+            } elseif (array_key_exists($op, $like_ops)) {
                 $wh[] = $c['db'] . ' ' . str_replace('{data}', addcslashes($data, '%_'), $like_ops[$op]);
-            }
-            else
-            {
-                switch($op)
-                {
+            } else {
+                switch ($op) {
                     case 'nu':
                         $wh[] = $c['db'] . ' IS NULL';
                         break;
@@ -1452,8 +1351,7 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
         // Process sub-groups recursively
         //------------
 
-        foreach($row['groups'] as $g)
-        {
+        foreach ($row['groups'] as $g) {
             $wh[] = $this->searchAdvancedGroup($g);
         }
 
@@ -1495,20 +1393,17 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
     protected function searchOpAuto($c, $val)
     {
         #Search type - select?
-        if(isset($c['stype']) and $c['stype'] == 'select')
-        {
+        if (isset($c['stype']) and $c['stype'] == 'select') {
             return self::searchOpEqual($c, $val);
         }
 
         #Numeric by formatter?
-        if(isset($c['formatter']) and in_array($c['formatter'], array('integer', 'numeric', 'currency')))
-        {
+        if (isset($c['formatter']) and in_array($c['formatter'], array('integer', 'numeric', 'currency'))) {
             return self::searchOpNumeric($c, $val);
         }
 
         #Numeric by value?
-        if(preg_match('#^([<>=!]{1,2})?\d+$#', $val))
-        {
+        if (preg_match('#^([<>=!]{1,2})?\d+$#', $val)) {
             return self::searchOpNumeric($c, $val);
         }
 
@@ -1583,10 +1478,8 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
     {
         static $prefix = array('<=', '>=', '<>', '!=', '<', '>', '=');
 
-        foreach($prefix as $p)
-        {
-            if(strpos($val, $p) === 0)
-            {
+        foreach ($prefix as $p) {
+            if (strpos($val, $p) === 0) {
                 $op = $p;
                 $val = substr($val, strlen($p));
                 break;
@@ -1628,29 +1521,23 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
      */
     protected function setRowCount($count = null)
     {
-        if(is_null($count))
-        {
+        if (is_null($count)) {
             #Retrieve count from agg data
-            if(isset($this->agg['_count']))
-            {
+            if (isset($this->agg['_count'])) {
                 $count = $this->agg['_count'];
-            }
-            #Simply count 'rows'
-            else
-            {
+            } #Simply count 'rows'
+            else {
                 $count = count($this->rows);
             }
         }
 
         $count = intval($count);
 
-        if($count < 0)
-        {
+        if ($count < 0) {
             throw new jqGrid_Exception('Invalid count value');
         }
 
-        if(!$count)
-        {
+        if (!$count) {
             $this->count = 0;
             $this->page = 0;
             $this->total = 0;
@@ -1661,14 +1548,11 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
 
         $this->count = $count;
 
-        if($this->limit == -1)
-        {
+        if ($this->limit == -1) {
             $this->total = 1;
             $this->page = 1;
             $this->offset = 0;
-        }
-        elseif($this->limit)
-        {
+        } elseif ($this->limit) {
             $this->total = ($this->count > 0) ? ceil($this->count / $this->limit) : 0;
 
             $this->page = ($this->page <= $this->total) ? $this->page : $this->total;
@@ -1690,12 +1574,10 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
      */
     protected function input($key, $default = null)
     {
-        if(is_array($key))
-        {
+        if (is_array($key)) {
             $ret = array();
 
-            foreach($key as $k)
-            {
+            foreach ($key as $k) {
                 $ret[$k] = $this->input($k, $default);
             }
 
@@ -1707,44 +1589,14 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
 
     /**
      * Send JSON to browser
-     * Please set $this->json_mode for special output
-     *
-     * TODO: add jsonp support
      *
      * @param  $obj object to send
      * @return void
      */
     protected function json($obj)
     {
-        #Mode preset
-        if($this->json_mode)
-        {
-            $mode = $this->json_mode;
-        }
-        #Common jQuery request
-        elseif(isset($_SERVER['HTTP_X_REQUESTED_WITH']))
-        {
-            $mode = 'json';
-        }
-        #Probably ajaxForm iframe
-        else
-        {
-            $mode = 'ajaxForm';
-        }
-
-        switch($mode)
-        {
-            case 'ajaxForm':
-                header("Content-type: text/html; charset={$this->Loader->get('encoding')};");
-                //echo '<textarea>' . jqGrid_Utils::jsonEncode($obj) . '</textarea>';
-                echo jqGrid_Utils::jsonEncode($obj);
-                break;
-
-            default:
-                header("Content-type: application/json; charset={$this->Loader->get('encoding')};");
-                echo jqGrid_Utils::jsonEncode($obj);
-                break;
-        }
+        header("Content-type: application/json; charset=utf-8");
+        echo json_encode($obj);
     }
 
     /**
@@ -1758,8 +1610,7 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
     {
         $pk_parts = explode($this->primary_key_glue, $primary_key);
 
-        if(count($this->primary_key) != count($pk_parts))
-        {
+        if (count($this->primary_key) != count($pk_parts)) {
             throw new jqGrid_Exception('Incorrect format of primary key');
         }
 
@@ -1774,8 +1625,7 @@ $grid.jqGrid($.extend(' . jqGrid_Utils::jsonEncode($data['options']) . ', typeof
      */
     protected function implodePrimaryKey($row)
     {
-        foreach($this->primary_key as $k)
-        {
+        foreach ($this->primary_key as $k) {
             $pk_parts[] = $row[$k];
         }
 

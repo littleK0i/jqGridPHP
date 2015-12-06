@@ -3,13 +3,14 @@
  * Special serialization for 'selects'
  * and 'searchoptions' => 'value', 'editoptions' => 'value' etc.
  */
-class jqGrid_Data_Value extends jqGrid_Data
+
+namespace jqGridPHP\Container;
+
+class Value extends AbstractContainer
 {
-    #Ensure 'array' input
     public function __construct(array $data, $first = null)
     {
-        if(!is_null($first))
-        {
+        if (!is_null($first)) {
             $data = array('' => $first) + $data;
         }
 
@@ -20,8 +21,7 @@ class jqGrid_Data_Value extends jqGrid_Data
     {
         $base = array();
 
-        foreach($this->data as $k => $v)
-        {
+        foreach ($this->data as $k => $v) {
             $base[] = $k . ':' . $v;
         }
 

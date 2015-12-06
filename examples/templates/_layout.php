@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Examples</title>
+    <title>jqGrid PHP Examples</title>
 
     <!--jQuery-->
     <script src="http://yandex.st/jquery/1.7.2/jquery.min.js"></script>
